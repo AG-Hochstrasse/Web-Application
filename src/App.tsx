@@ -5,6 +5,7 @@ import './App.css';
 import AppHeader from './components/AppHeader';
 import AppHome from './components/AppHome';
 import AppAbout from './components/AppAbout';
+import PersonDetail from './components/PersonDetail';
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Link as RouterLink } from 'react-router-dom';
@@ -28,7 +29,7 @@ function App() {
         >
           <Routes>
                 <Route path="/" element={<AppHome />} />
-                <Route path="/detail/:id" element={<AppAbout />} />
+                <Route path="/detail/:id" element={<PersonDetail />} />
                 <Route path="/about" element={<AppAbout />} />
           </Routes>
         </Box>
