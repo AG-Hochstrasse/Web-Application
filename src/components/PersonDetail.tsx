@@ -4,7 +4,8 @@ import { useParams } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
 import { useState, useEffect } from 'react';
 
-import { StateLabel } from '@primer/react';
+import { StateLabel, Box, PageHeader, RelativeTime, Button, Octicon } from '@primer/react';
+import { PencilIcon } from '@primer/octicons-react';
 
 const PersonDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -44,14 +45,28 @@ const PersonDetail: React.FC = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div>
-      <h1>Detail Page</h1>
-      <p><strong>ID:</strong> {id}</p>
-      <p><strong>Name:</strong> {person.name}</p>
-      <p><strong>Birth:</strong> {person.birth}</p>
-      <p><strong>Death:</strong> {person.death}</p>
-    </div>
-  );
+      <Box
+        sx={{
+          padding: 3,
+        }}
+      >
+        <PageHeader>
+          <PageHeader.TitleArea>
+            <PageHeader.Title>{person.name}</PageHeader.Title>
+          </PageHeader.TitleArea>
+          <PageHeader.Description>
+            {/* @ts-ignore */}
+            <StateLabel status="issueOpened">Open</StateLabel>
+            {/* @ts-ignore */}
+            Created <RelativeTime dateTime="2024-09-07T17:32:24.118969+00:00" />
+          </PageHeader.Description>
+          <PageHeader.Actions>
+            <Button>Edit</Button>
+            <Button variant="primary">Complete</Button>
+          </PageHeader.Actions>
+        </PageHeader>
+      </Box>
+      );
 };
 
 export default PersonDetail;
