@@ -12,12 +12,18 @@ export default function AppHeader() {
       </Header.Link>
     </Header.Item>
 
-    <Header.Item full>
-      <Header.Link as={RouterLink} to="/about" >
+    <Header.Item>
+      <Header.Link sx={{ fontWeight: 'normal' }} as={RouterLink} to="/" >
+        Home
+      </Header.Link>
+    </Header.Item>
+
+    <Header.Item full >
+      <Header.Link sx={{ fontWeight: 'normal' }} as={RouterLink} to="/about" >
         About
       </Header.Link>
     </Header.Item>
-    
+
     <Header.Item sx={{ mr: 0, }} >
       <Avatar src="https://github.com/octocat.png" size={30} square alt="@octocat" />
     </Header.Item>

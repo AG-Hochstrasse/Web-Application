@@ -28,6 +28,7 @@ function App() {
         >
           <Routes>
                 <Route path="/" element={<AppHome />} />
+                <Route path="/detail/:id" element={<AppAbout />} />
                 <Route path="/about" element={<AppAbout />} />
           </Routes>
         </Box>
