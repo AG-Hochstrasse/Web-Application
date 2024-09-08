@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
 import { useState, useEffect, useRef } from 'react';
 
-import { StateLabel, Box, PageHeader, RelativeTime, Button, Label, Dialog, Text, TabNav, IconButton } from '@primer/react';
+import { StateLabel, Box, PageHeader, RelativeTime, Button, Label, Dialog, Text, TabNav, IconButton, Stack } from '@primer/react';
 import { NoteIcon, AlertIcon, PeopleIcon, CommentDiscussionIcon, ArrowLeftIcon } from '@primer/octicons-react';
 import { SkeletonText } from '@primer/react/drafts';
 import PeopleDetailDetails from './PeopleDetailDetails';
@@ -73,27 +73,28 @@ const PersonDetail: React.FC = () => {
         </PageHeader.Description>
         <PageHeader.Navigation>
           {/* TabNav placeholder */}
-          <Box sx={{height: 50}} />
+          <Box sx={{height: 30}} />
 
-          {/* Content for each tab */}
-          <Box mt={3}>
-
-          </Box>
+          <Stack>
+            <Stack gap="none">
+              <SkeletonText maxWidth={100} />
+              <SkeletonText maxWidth={500} />
+            </Stack>
+            <Stack gap="none">
+              <SkeletonText maxWidth={100} />
+              <SkeletonText maxWidth={500} />
+            </Stack>
+            <Stack gap="none">
+              <SkeletonText maxWidth={100} />
+              <SkeletonText maxWidth={500} />
+            </Stack>
+            <Stack gap="none">
+              <SkeletonText maxWidth={100} />
+              <SkeletonText maxWidth={500} />
+            </Stack>
+          </Stack>
         </PageHeader.Navigation>
       </PageHeader>
-      {/* @ts-ignore */}
-      <Dialog returnFocusRef={returnFocusRef} isOpen={isOpen} onDismiss={() => setIsOpen(false)} aria-labelledby="header" >
-        <div data-testid="inner">
-          {/* @ts-ignore */}
-          <Dialog.Header id="header">Title</Dialog.Header>
-          <Box p={3}>
-            <Text>Some content</Text>
-          </Box>
-          <Box p={3} borderTop="1px solid" borderColor="border.default" display="flex" justifyContent="flex-end">
-            <Button variant="primary">Close</Button>
-          </Box>
-        </div>
-      </Dialog>
     </Box>
   );
 
