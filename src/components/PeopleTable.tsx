@@ -6,7 +6,7 @@ import { EyeClosedIcon } from '@primer/octicons-react';
 
 import StateIcon from './StateIcon';
 
-const AppData: React.FC = () => {
+const PeopleTable: React.FC = () => {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -71,8 +71,6 @@ const AppData: React.FC = () => {
                 cursor: 'pointer',
                 width: 2
               }}
-              component={RouterLink}
-              to={`/detail/${item.id}`}
             >{ item.hidden && <Octicon icon={EyeClosedIcon} /> }</Box>
             <Box
               as="td"
@@ -83,8 +81,6 @@ const AppData: React.FC = () => {
                 cursor: 'pointer',
                 width: 2
               }}
-              component={RouterLink}
-              to={`/detail/${item.id}`}
             ><StateIcon state={item.status}></StateIcon></Box>
             <Box
               as="td"
@@ -97,7 +93,7 @@ const AppData: React.FC = () => {
               component={RouterLink}
               to={`/detail/${item.id}`}
             >
-              <Link as={RouterLink} to={`/detail/${item.id}`} sx={{ color: 'unset' }}>{item.name}</Link>
+              <Link as={RouterLink} to={`/people/${item.id}`} sx={{ color: 'unset' }}>{item.name}</Link>
             </Box>
             <Box
               as="td"
@@ -110,7 +106,7 @@ const AppData: React.FC = () => {
               component={RouterLink}
               to={`/detail/${item.id}`}
             >
-              <Link as={RouterLink} to={`/detail/${item.id}`} sx={{ color: 'unset' }}>{item.birth}</Link>
+              <Link as={RouterLink} to={`/people/${item.id}`} sx={{ color: 'unset' }}>{item.birth}</Link>
             </Box>
             <Box
               as="td"
@@ -121,9 +117,9 @@ const AppData: React.FC = () => {
                 cursor: 'pointer',
               }}
               component={RouterLink}
-              to={`/detail/${item.id}`}
+              to={`/people/${item.id}`}
             >
-              <Link as={RouterLink} to={`/detail/${item.id}`} sx={{ color: 'unset' }}>{item.death}</Link>
+              <Link as={RouterLink} to={`/people/${item.id}`} sx={{ color: 'unset' }}>{item.death}</Link>
             </Box>
           </tr>
         ))}
@@ -132,4 +128,4 @@ const AppData: React.FC = () => {
   );
 };
 
-export default AppData;
+export default PeopleTable;
