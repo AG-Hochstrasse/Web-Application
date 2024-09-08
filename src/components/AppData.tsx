@@ -73,7 +73,7 @@ const AppData: React.FC = () => {
               }}
               component={RouterLink}
               to={`/detail/${item.id}`}
-            >{ item.hidden ? <Octicon icon={EyeClosedIcon} /> : <></> }</Box>
+            >{ item.hidden && <Octicon icon={EyeClosedIcon} /> }</Box>
             <Box
               as="td"
               sx={{

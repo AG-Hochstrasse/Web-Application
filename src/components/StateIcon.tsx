@@ -5,14 +5,14 @@ import { IssueOpenedIcon, IssueClosedIcon, IssueTrackedByIcon } from '@primer/oc
 
 
 const StateIcon = (props: any) => {
-    switch(props.state) {
+    switch (props.state) {
         case 'open':
-            return <Octicon icon={IssueOpenedIcon} sx={{ color: '#1a7f37'}} />
+            return <Octicon icon={IssueOpenedIcon} color='#1a7f37' />
         case 'closed':
             return <Octicon icon={IssueClosedIcon} color='#8250df' />
         default:
             return <></>
     }
-  };
+};
 
 export default StateIcon;
