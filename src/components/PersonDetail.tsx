@@ -1,11 +1,12 @@
-// DetailPage.tsx
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
 import { useState, useEffect, useRef } from 'react';
 
-import { StateLabel, Box, PageHeader, RelativeTime, Button, Label, Dialog, Text, ActionBar, TabNav, IconButton } from '@primer/react';
+import { StateLabel, Box, PageHeader, RelativeTime, Button, Label, Dialog, Text, TabNav, IconButton } from '@primer/react';
 import { NoteIcon, AlertIcon, PeopleIcon, CommentDiscussionIcon, ArrowLeftIcon } from '@primer/octicons-react';
+import { SkeletonText } from '@primer/react/drafts';
+import PeopleDetailDetails from './PeopleDetailDetails';
 
 const PersonDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -48,8 +49,53 @@ const PersonDetail: React.FC = () => {
     fetchData();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
+
+  if (loading) return (
+    <Box
+      sx={{
+        padding: 3,
+      }}
+    >
+      <PageHeader>
+        <PageHeader.TitleArea>
+          <PageHeader.LeadingAction><IconButton icon={ArrowLeftIcon} aria-label="Back" variant="invisible" onClick={() => navigate("/")} /></PageHeader.LeadingAction>
+          <PageHeader.Title><Box sx={{width: 500}}><SkeletonText size="titleMedium" /></Box></PageHeader.Title>
+        </PageHeader.TitleArea>
+        <PageHeader.Description>
+          <Box sx={{width: 100}}>
+            <SkeletonText size="titleMedium" />
+          </Box>
+          <Box sx={{width: 75}}>
+            <SkeletonText />
+          </Box>
+          <SkeletonText />
+        </PageHeader.Description>
+        <PageHeader.Navigation>
+          {/* TabNav placeholder */}
+          <Box sx={{height: 50}} />
+
+          {/* Content for each tab */}
+          <Box mt={3}>
+
+          </Box>
+        </PageHeader.Navigation>
+      </PageHeader>
+      {/* @ts-ignore */}
+      <Dialog returnFocusRef={returnFocusRef} isOpen={isOpen} onDismiss={() => setIsOpen(false)} aria-labelledby="header" >
+        <div data-testid="inner">
+          {/* @ts-ignore */}
+          <Dialog.Header id="header">Title</Dialog.Header>
+          <Box p={3}>
+            <Text>Some content</Text>
+          </Box>
+          <Box p={3} borderTop="1px solid" borderColor="border.default" display="flex" justifyContent="flex-end">
+            <Button variant="primary">Close</Button>
+          </Box>
+        </div>
+      </Dialog>
+    </Box>
+  );
 
   return (
     <Box
@@ -78,6 +124,7 @@ const PersonDetail: React.FC = () => {
           >Complete</Button>
         </PageHeader.Actions>
         <PageHeader.Navigation>
+          {/* @ts-ignore */}
           <TabNav aria-label="Main">
             <TabNav.Link selected={selectedTab === 'details'} onClick={() => setSelectedTab('details')}>
               <NoteIcon size={16} /> <Text ml={1}>Info</Text>
@@ -95,7 +142,7 @@ const PersonDetail: React.FC = () => {
 
           {/* Content for each tab */}
           <Box mt={3}>
-            {selectedTab === 'details' && <Text>Coming soon...</Text>}
+            {selectedTab === 'details' && <PeopleDetailDetails person={person} />}
             {selectedTab === 'discussion' && <Text>Coming soon...</Text>}
             {selectedTab === 'photos' && <Text>Coming soon...</Text>}
             {selectedTab === 'conflicts' && <Text>Coming soon...</Text>}
@@ -103,12 +150,7 @@ const PersonDetail: React.FC = () => {
         </PageHeader.Navigation>
       </PageHeader>
       {/* @ts-ignore */}
-      <Dialog
-        returnFocusRef={returnFocusRef}
-        isOpen={isOpen}
-        onDismiss={() => setIsOpen(false)}
-        aria-labelledby="header"
-      >
+      <Dialog returnFocusRef={returnFocusRef} isOpen={isOpen} onDismiss={() => setIsOpen(false)} aria-labelledby="header" >
         <div data-testid="inner">
           {/* @ts-ignore */}
           <Dialog.Header id="header">Title</Dialog.Header>
