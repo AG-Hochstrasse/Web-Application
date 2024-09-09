@@ -9,7 +9,7 @@ import AppAbout from './components/AppAbout';
 import PersonDetail from './components/PersonDetail';
 import PeopleTable from './components/PeopleTable';
 import AppAccount from './components/AppAccount';
-import InsertPeople from './components/InsertPeople';
+import InsertPeople from './components/EditPeople';
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Link as RouterLink, Navigate } from 'react-router-dom';
@@ -79,8 +79,7 @@ export function App() {
             <Route path="/people/:id" element={<PersonDetail />} />
             <Route path="/about" element={<AppAbout />} />
             <Route path="/account" element={<AppAccount session={session} />} />
-            {/* @ts-ignore */}
-            <Route path="/people/new" element={<InsertPeople session={session} />} />
+            <Route path="/people/new" element={<InsertPeople session={session} insert={true} />} />
           </Routes>
         </Box>
 
