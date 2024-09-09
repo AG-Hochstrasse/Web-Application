@@ -1,9 +1,10 @@
-import { Button, Header, Heading, Text, Avatar, Box, Octicon } from '@primer/react'
+import { Button, Header, Heading, Text, Avatar, Link, Octicon } from '@primer/react'
 import { ThreeBarsIcon, FileMediaIcon } from '@primer/octicons-react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Link as RouterLink } from 'react-router-dom';
+import ProfileMenu from './ProfileMenu';
 
-export default function AppHeader() {
+export default function AppHeader(props: any) {
   return <Header>
     <Header.Item>
       <Header.Link as={RouterLink} to="/" mr={2} sx={{ fontSize: 2, }}>
@@ -25,7 +26,10 @@ export default function AppHeader() {
     </Header.Item>
 
     <Header.Item sx={{ mr: 0, }} >
-      <Avatar src="https://github.com/octocat.png" size={30} square alt="@octocat" />
+      
+      
+      {/* @ts-ignore */}
+      <ProfileMenu session={props.session}/>
     </Header.Item>
   </Header>
 }
