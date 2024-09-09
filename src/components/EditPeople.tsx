@@ -84,29 +84,46 @@ export default function InsertPeople({ session, insert }: any) {
             <FormControl.Label>ID</FormControl.Label>
             <TextInput monospace disabled value={person!.id} />
           </>}
+        </FormControl>
+        <FormControl>
           <FormControl.Label>Name</FormControl.Label>
           <TextInput />
+        </FormControl>
 
+        <FormControl>
           <FormControl.Label>Birth</FormControl.Label>
-          <TextInput />
+          <TextInput type="date" />
+        </FormControl>
 
+        <FormControl>
           <FormControl.Label>Death</FormControl.Label>
-          <TextInput />
+          <TextInput type="date" />
+        </FormControl>
 
+        <FormControl>
           <FormControl.Label>Place of birth</FormControl.Label>
           <TextInput />
+        </FormControl>
 
+        <FormControl>
           <FormControl.Label>Place of death</FormControl.Label>
           <TextInput />
+        </FormControl>
 
+        <FormControl>
           <FormControl.Label>Cause of death</FormControl.Label>
           <TextInput />
+        </FormControl>
 
+        <FormControl>
           <FormControl.Label>Residence</FormControl.Label>
           <TextInput />
+        </FormControl>
 
+        <FormControl>
           <FormControl.Label>Comments</FormControl.Label>
           <Textarea />
+          <FormControl.Caption>For conflicting data, please create a conflict instead after creating this person.</FormControl.Caption>
         </FormControl>
       </Box>
     </>
