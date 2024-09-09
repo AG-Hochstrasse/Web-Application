@@ -26,8 +26,6 @@ export default function AppHeader(props: any) {
 
     <Header.Item sx={{ mr: 0, }} >
       <Avatar src="https://github.com/octocat.png" size={30} square alt="@octocat" />
-      <div data-netlify-identity-menu></div>
-      <div data-netlify-identity-button>Login with Netlify Identity</div>
     </Header.Item>
   </Header>
 }
