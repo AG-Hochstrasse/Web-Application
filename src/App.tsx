@@ -81,6 +81,7 @@ export function App() {
             <Route path="/people/:id" element={<PersonDetail />} />
             <Route path="/about" element={<AppAbout />} />
             <Route path="/account" element={<AppAccount session={session} />} />
+            {/* @ts-ignore */}
             <Route path="/people/new" element={<InsertPeople session={session} />} />
           </Routes>
         </Box>
