@@ -4,9 +4,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Link as RouterLink } from 'react-router-dom';
 import PeopleTable from './PeopleTable';
 
-export default function AppHome() {
+export default function AppHome(props: any) {
   return <>
-    <Heading>Welcome!</Heading>
+    <Heading>Welcome {props.session && props.session.user.email }!</Heading>
     <PeopleTable/>
     
   </>

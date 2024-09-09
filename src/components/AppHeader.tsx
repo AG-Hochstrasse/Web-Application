@@ -3,7 +3,7 @@ import { ThreeBarsIcon, FileMediaIcon } from '@primer/octicons-react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Link as RouterLink } from 'react-router-dom';
 
-export default function AppHeader() {
+export default function AppHeader(props: any) {
   return <Header>
     <Header.Item>
       <Header.Link as={RouterLink} to="/" mr={2} sx={{ fontSize: 2, }}>
@@ -26,6 +26,8 @@ export default function AppHeader() {
 
     <Header.Item sx={{ mr: 0, }} >
       <Avatar src="https://github.com/octocat.png" size={30} square alt="@octocat" />
+      <div data-netlify-identity-menu></div>
+      <div data-netlify-identity-button>Login with Netlify Identity</div>
     </Header.Item>
   </Header>
 }
