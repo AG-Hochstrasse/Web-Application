@@ -85,8 +85,7 @@ const PeopleTable: React.FC = () => {
             field: 'birth',
             renderCell: (row: Person) => (
               <Link as={RouterLink} to={`/people/${row.id}`} sx={{ color: 'unset' }}>
-                {/* @ts-ignore */}
-                <RelativeTime date={new Date(row.birth)} />
+                {row.birth}
               </Link>
             ),
           },
@@ -95,11 +94,28 @@ const PeopleTable: React.FC = () => {
             field: 'death',
             renderCell: (row: Person) => (
               <Link as={RouterLink} to={`/people/${row.id}`} sx={{ color: 'unset' }}>
-                {/* @ts-ignore */}
-                <RelativeTime date={new Date(row.death)} />
+                {row.death}
               </Link>
             ),
           },
+          {
+            header: 'ID',
+            field: 'id',
+            renderCell: (row: Person) => (
+              <Link as={RouterLink} to={`/people/${row.id}`} sx={{ color: 'unset', fontFamily: 'monospace'}}>
+                {row.id}
+              </Link>
+            )
+          },
+          {
+            header: 'Created',
+            field: 'created_at',
+            renderCell: (row: Person) => (
+              <Link as={RouterLink} to={`/people/${row.id}`} sx={{color: 'unset'}}>
+                <RelativeTime dateTime={row.created_at} />
+              </Link>
+            )
+          }
         ]}
         data={data}
       />
