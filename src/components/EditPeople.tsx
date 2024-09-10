@@ -46,7 +46,7 @@ export default function EditPeople({ session, insert }: any) {
   const [databaseError, setDatabaseError] = useState<PostgrestError | null>(null)
   const [loading, setLoading] = useState(!insert)
 
-  const [name, setName] = useState<string>(person ? person.name : "")
+  const [name, setName] = useState<string>("")
   const [birth, setBirth] = useState<string | null>(person?.birth ? person.birth : null)
   const [death, setDeath] = useState<string | null>(person?.death ? person.death : null)
   const [birthPlace, setBirthPlace] = useState<string | null>(person?.birth_place ? person.birth_place : null)
@@ -71,7 +71,15 @@ export default function EditPeople({ session, insert }: any) {
           if (!data) {
             setError("Unknown error")
           }
-          setPerson(data![0]);
+          const person = data![0]
+          setPerson(person);
+          setName(person.name)
+          setBirth(person.birth)
+          setDeath(person.death)
+          setBirthPlace(person.birth_place)
+          setDeathPlace(person.death_place)
+          setDeathCause(person.death_cause)
+          setResidence(person.residence)
         } catch (error) {
           if (error instanceof Error) {
             setError(error.message);
@@ -106,7 +114,7 @@ export default function EditPeople({ session, insert }: any) {
     <>
       <PageHeader>
         <PageHeader.TitleArea>
-          <PageHeader.LeadingAction><IconButton icon={ArrowLeftIcon} aria-label="Back" variant="invisible" onClick={() => navigate("/")} /></PageHeader.LeadingAction>
+          <PageHeader.LeadingAction><IconButton icon={ArrowLeftIcon} aria-label="Back" variant="invisible" onClick={() => navigate("/people")} /></PageHeader.LeadingAction>
           <PageHeader.Title>{insert ? "Create new" : "Edit"} person</PageHeader.Title>
         </PageHeader.TitleArea>
       </PageHeader>
@@ -138,48 +146,56 @@ export default function EditPeople({ session, insert }: any) {
           </FormControl>
           <FormControl>
             <FormControl.Label>Name</FormControl.Label>
-            <TextInput required onChange={(e) => { setName(e.target.value); }} />
+            {/* @ts-ignore */}
+            <TextInput required value={name} onChange={(e) => { setName(e.target.value); }} />
           </FormControl>
 
           <FormControl>
             <FormControl.Label>Birth</FormControl.Label>
-            <TextInput type="date" onChange={(e) => { setBirth(e.target.value ? e.target.value : null); }} />
+            {/* @ts-ignore */}
+            <TextInput type="date" value={birth} onChange={(e) => { setBirth(e.target.value ? e.target.value : null); }} />
           </FormControl>
 
           <FormControl>
             <FormControl.Label>Death</FormControl.Label>
-            <TextInput type="date" onChange={(e) => { setDeath(e.target.value ? e.target.value : null); }} />
+            {/* @ts-ignore */}
+            <TextInput type="date" value={death} onChange={(e) => { setDeath(e.target.value ? e.target.value : null); }} />
           </FormControl>
 
           <FormControl>
             <FormControl.Label>Place of birth</FormControl.Label>
-            <TextInput onChange={(e) => { setBirthPlace(e.target.value); }} />
+            {/* @ts-ignore */}
+            <TextInput value={birthPlace} onChange={(e) => { setBirthPlace(e.target.value); }} />
           </FormControl>
 
           <FormControl>
             <FormControl.Label>Place of death</FormControl.Label>
-            <TextInput onChange={(e) => { setDeathPlace(e.target.value); }} />
+            {/* @ts-ignore */}
+            <TextInput value={deathPlace} onChange={(e) => { setDeathPlace(e.target.value); }} />
           </FormControl>
 
           <FormControl>
             <FormControl.Label>Cause of death</FormControl.Label>
-            <TextInput onChange={(e) => { setDeathCause(e.target.value); }} />
+            {/* @ts-ignore */}
+            <TextInput value={deathCause} onChange={(e) => { setDeathCause(e.target.value); }} />
           </FormControl>
 
           <FormControl>
             <FormControl.Label>Residence</FormControl.Label>
-            <TextInput onChange={(e) => { setResidence(e.target.value); }} />
+            {/* @ts-ignore */}
+            <TextInput value={residence} onChange={(e) => { setResidence(e.target.value); }} />
           </FormControl>
 
           <FormControl>
             <FormControl.Label>Comments</FormControl.Label>
-            <Textarea onChange={(e) => { setComments(e.target.value); }} />
+            {/* @ts-ignore */}
+            <Textarea value={comments} onChange={(e) => { setComments(e.target.value); }} />
             <FormControl.Caption>For conflicting data, please create a conflict instead after creating this person.</FormControl.Caption>
           </FormControl>
 
           <FormControl>
             {insert ? <Button variant="primary" onClick={() => {
-              const a = createPerson({ name: name, birth: String(birth), hidden: true, state: "open", death: String(death), birth_place: birthPlace, death_place: deathPlace, death_cause: deathCause, residence: residence, comments: comments, created_at: String(new Date()) })
+              const a = createPerson({ name: name, birth: String(birth), hidden: true, state: "open", death: String(death), birth_place: birthPlace, death_place: deathPlace, death_cause: deathCause, residence: residence, comments: comments })
               a.then((response) => {
                 if (response) {
                   setDatabaseError(response.error)
@@ -193,7 +209,8 @@ export default function EditPeople({ session, insert }: any) {
                     setDatabaseError(error)
                   }
                 })
-              }}>Create</Button>
+                navigate(`/people/${id.id}`)
+              }}>Update</Button>
             }
           </FormControl>
         </Stack>

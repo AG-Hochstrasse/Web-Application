@@ -25,5 +25,4 @@ export interface UnIdentifiedPerson {
   death_cause: string | null;
   residence: string | null;
   comments: string;
-  created_at: string;
 }
