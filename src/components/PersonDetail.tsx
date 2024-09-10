@@ -117,7 +117,7 @@ const PersonDetail: React.FC = () => {
           Created <RelativeTime dateTime="2024-09-07T17:32:24.118969+00:00" />
         </PageHeader.Description>
         <PageHeader.Actions>
-          <Button>Edit</Button>
+          <Button onClick={() => {navigate(`/people/${id}/edit`)}}>Edit</Button>
           <Button variant="primary"
             data-testid="trigger-button"
             ref={returnFocusRef}

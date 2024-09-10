@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../services/supabaseClient';
-import { Octicon, Box, Link, RelativeTime, Stack, Spinner, Text } from '@primer/react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Octicon, Box, Link, RelativeTime, Stack, Spinner, Text, Button, PageHeader } from '@primer/react';
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import { EyeClosedIcon, RepoIcon } from '@primer/octicons-react';
 import { SkeletonAvatar, SkeletonText } from '@primer/react/drafts';
 import { Banner, DataTable } from '@primer/react/experimental';
@@ -14,6 +14,9 @@ const PeopleTable: React.FC = () => {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const location = useLocation();
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,6 +65,19 @@ const PeopleTable: React.FC = () => {
 
   return (
     <Box my={4}>
+      <PageHeader>
+        <PageHeader.TitleArea>
+          <PageHeader.Title>People</PageHeader.Title>
+        </PageHeader.TitleArea>
+        <PageHeader.Actions>
+          {location.pathname != "/people" && <Button onClick={ () => { navigate("/people")}}>Show all</Button>}
+          <Button variant="primary"
+            data-testid="trigger-button"
+            onClick={() => navigate("/people/new")}
+          >New</Button>
+        </PageHeader.Actions>
+      </PageHeader>
+      <br />
       <DataTable
         aria-labelledby="people-table"
         aria-describedby="people-table-description"
@@ -85,8 +101,7 @@ const PeopleTable: React.FC = () => {
             field: 'birth',
             renderCell: (row: Person) => (
               <Link as={RouterLink} to={`/people/${row.id}`} sx={{ color: 'unset' }}>
-                {/* @ts-ignore */}
-                <RelativeTime date={new Date(row.birth)} />
+                {row.birth}
               </Link>
             ),
           },
@@ -95,11 +110,29 @@ const PeopleTable: React.FC = () => {
             field: 'death',
             renderCell: (row: Person) => (
               <Link as={RouterLink} to={`/people/${row.id}`} sx={{ color: 'unset' }}>
-                {/* @ts-ignore */}
-                <RelativeTime date={new Date(row.death)} />
+                {row.death}
               </Link>
             ),
           },
+          {
+            header: 'ID',
+            field: 'id',
+            renderCell: (row: Person) => (
+              <Link as={RouterLink} to={`/people/${row.id}`} sx={{ color: 'unset', fontFamily: 'monospace' }}>
+                {row.id}
+              </Link>
+            )
+          },
+          {
+            header: 'Created',
+            field: 'created_at',
+            renderCell: (row: Person) => (
+              <Link as={RouterLink} to={`/people/${row.id}`} sx={{ color: 'unset' }}>
+                {/* @ts-ignore */}
+                <RelativeTime dateTime={row.created_at} />
+              </Link>
+            )
+          }
         ]}
         data={data}
       />
