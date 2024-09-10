@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../services/supabaseClient';
-import { Octicon, Box, Link, RelativeTime, Stack, Spinner, Text, Button, PageHeader, IconButton } from '@primer/react';
+import { Octicon, Box, Link, RelativeTime, Stack, Spinner, Text, Button, TextInput, IconButton } from '@primer/react';
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
-import { ArrowRightIcon, EyeClosedIcon, PlusIcon, RepoIcon } from '@primer/octicons-react';
+import { ArrowRightIcon, EyeClosedIcon, PlusIcon, RepoIcon, SearchIcon } from '@primer/octicons-react';
 import { SkeletonAvatar, SkeletonText, Table } from '@primer/react/drafts';
 import { Banner, DataTable } from '@primer/react/experimental';
 
@@ -15,6 +15,11 @@ const PeopleTable: React.FC = () => {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const filteredData = data.filter((row: Person) =>
+    row.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const location = useLocation();
   const navigate = useNavigate()
@@ -68,10 +73,16 @@ const PeopleTable: React.FC = () => {
     <Box my={4}>
       <TableContainer>
         <Table.Title id="people">People</Table.Title>
-        <Table.Subtitle id="people-subtitle">All people we are researching</Table.Subtitle>
         <Table.Actions><IconButton icon={PlusIcon} aria-label="Add" variant="invisible" onClick={() => navigate("/people/new")} />
-          { location.pathname != "/people" && <IconButton icon={ArrowRightIcon} aria-label="Show all" variant="invisible" onClick={() => navigate("/people/new")} />}
+          {location.pathname != "/people" && <IconButton icon={ArrowRightIcon} aria-label="Show all" variant="invisible" onClick={() => navigate("/people/new")} />}
         </Table.Actions>
+        <TextInput
+          leadingVisual={SearchIcon}
+          placeholder="Search..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          sx={{ mb: 3 }} // Adding some margin below search bar
+        />
         <DataTable
           aria-labelledby="people-table"
           aria-describedby="people-table-description"
