@@ -18,7 +18,8 @@ const PeopleTable: React.FC = () => {
 
   const [searchQuery, setSearchQuery] = useState('');
   const filteredData = data.filter((row: Person) =>
-    row.name.toLowerCase().includes(searchQuery.toLowerCase())
+    row.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    String(row.id).includes(searchQuery)
   );
 
   const location = useLocation();
