@@ -139,7 +139,7 @@ const PeopleTable: React.FC = () => {
               )
             }
           ]}
-          data={data}
+          data={filteredData}
         />
       </TableContainer>
     </Box>
