@@ -15,8 +15,8 @@ const PersonDetail2 = (props: PeopleDetailInfoPros) => {
   const hasConflict = (field: string) => {
     return props.conflicts.some(conflict => conflict.field === field && conflict.type === "conflict");
   };
-  const hasUnsure = (field: string) => {
-    return props.conflicts.some(conflict => conflict.field === field && conflict.type === "unsure")
+  const hasNotConfirmed = (field: string) => {
+    return props.conflicts.some(conflict => conflict.field === field && conflict.type === "not_confirmed")
   }
   return (
     <div>
@@ -28,7 +28,7 @@ const PersonDetail2 = (props: PeopleDetailInfoPros) => {
             <div key={field}>
               <Text as="strong">{field.replaceAll('_', ' ').toUpperCase()} </Text>
               {hasConflict(field) && <Label variant='severe'>Conflict</Label>}
-              {hasUnsure(field) && <Label variant='attention'>Unsure</Label>}
+              {hasNotConfirmed(field) && <Label variant='attention'>Not confirmed</Label>}
               <br />
               <Text>{fieldValue.toString()}</Text>
               <br /><br />
