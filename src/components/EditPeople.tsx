@@ -149,7 +149,7 @@ export default function EditPeople({ session, insert }: any) {
     <>
       <PageHeader>
         <PageHeader.TitleArea>
-          <PageHeader.LeadingAction><IconButton icon={ArrowLeftIcon} aria-label="Back" variant="invisible" onClick={() => history.back()} /></PageHeader.LeadingAction>
+          <PageHeader.LeadingAction><IconButton icon={ArrowLeftIcon} aria-label="Back" variant="invisible" onClick={() => navigate(-1)} /></PageHeader.LeadingAction>
           <PageHeader.Title>{insert ? "Create new" : "Edit"} person</PageHeader.Title>
         </PageHeader.TitleArea>
       </PageHeader>
