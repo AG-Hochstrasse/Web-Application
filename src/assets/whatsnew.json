@@ -1,5 +1,14 @@
 [
     {
+        "description": "Fix deployment error",
+        "version":"0.3.1"
+    },
+    {
+        "description": "Fix bug when opening page",
+        "version": "0.3.1",
+        "thread": 22
+    },
+    {
         "description": "Not found page added",
         "version": "0.3.0"
     },
