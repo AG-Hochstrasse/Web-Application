@@ -6,7 +6,7 @@ import { useState, useEffect, useRef } from 'react';
 import { StateLabel, Box, PageHeader, RelativeTime, Button, Label, Dialog, Text, TabNav, IconButton, Stack } from '@primer/react';
 import { NoteIcon, AlertIcon, PeopleIcon, CommentDiscussionIcon, ArrowLeftIcon } from '@primer/octicons-react';
 import { SkeletonText } from '@primer/react/drafts';
-import PeopleDetailDetails from './PeopleDetailDetails';
+import PeopleDetailInfo from './PeopleDetailInfo';
 
 const PersonDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -107,7 +107,8 @@ const PersonDetail: React.FC = () => {
       <PageHeader>
         <PageHeader.TitleArea>
           <PageHeader.LeadingAction><IconButton icon={ArrowLeftIcon} aria-label="Back" variant="invisible" onClick={() => navigate("/")} /></PageHeader.LeadingAction>
-          <PageHeader.Title>{person.name}</PageHeader.Title>
+          <PageHeader.Title>{person.first_name} {person.name}</PageHeader.Title>
+          <PageHeader.TrailingVisual sx={{color: '#59636e', fontWeight: 'normal'}}>#{person.id}</PageHeader.TrailingVisual>
         </PageHeader.TitleArea>
         <PageHeader.Description>
           {/* @ts-ignore */}
@@ -143,7 +144,7 @@ const PersonDetail: React.FC = () => {
 
           {/* Content for each tab */}
           <Box mt={3}>
-            {selectedTab === 'details' && <PeopleDetailDetails person={person} />}
+            {selectedTab === 'details' && <PeopleDetailInfo person={person} />}
             {selectedTab === 'discussion' && <Text>Coming soon...</Text>}
             {selectedTab === 'photos' && <Text>Coming soon...</Text>}
             {selectedTab === 'conflicts' && <Text>Coming soon...</Text>}
