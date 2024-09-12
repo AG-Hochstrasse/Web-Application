@@ -6,7 +6,7 @@ import { useState, useEffect, useRef } from 'react';
 import { StateLabel, Box, PageHeader, RelativeTime, Button, Label, Dialog, Text, TabNav, IconButton, Stack, CounterLabel } from '@primer/react';
 import { NoteIcon, AlertIcon, PeopleIcon, CommentDiscussionIcon, ArrowLeftIcon } from '@primer/octicons-react';
 import { SkeletonText } from '@primer/react/drafts';
-import PeopleDetailInfo from './PeopleDetailInfo';
+import PersonDetailInfo from './PersonDetailInfo';
 import { Conflict } from '../Person';
 
 const PersonDetail: React.FC = () => {
@@ -175,7 +175,7 @@ const PersonDetail: React.FC = () => {
 
           {/* Content for each tab */}
           <Box mt={3}>
-            {selectedTab === 'details' && <PeopleDetailInfo person={person} conflicts={conflicts} />}
+            {selectedTab === 'details' && <PersonDetailInfo person={person} conflicts={conflicts} />}
             {selectedTab === 'discussion' && <Text>Coming soon...</Text>}
             {selectedTab === 'photos' && <Text>Coming soon...</Text>}
             {selectedTab === 'conflicts' && <Text>Coming soon...</Text>}
