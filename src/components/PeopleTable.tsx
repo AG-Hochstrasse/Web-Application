@@ -19,7 +19,11 @@ const PeopleTable: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const filteredData = data.filter((row: Person) =>
     row.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    String(row.id).includes(searchQuery)
+    String(row.id).includes(searchQuery) ||
+    (row.first_name?.toLowerCase() + " " + row.name.toLowerCase()).includes(searchQuery.toLowerCase()) ||
+    row.birth?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    row.death?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    row.grave_number?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const location = useLocation();
@@ -97,7 +101,7 @@ const PeopleTable: React.FC = () => {
                   <StateIcon state={row.state} />
                   {row.hidden ? <Octicon icon={EyeClosedIcon} /> : <Octicon icon={RepoIcon} />}
                   <Link as={RouterLink} to={`/people/${row.id}`} sx={{ color: 'unset' }}>
-                    {row.name}
+                    {row.first_name} {row.name}
                   </Link>
                 </Stack>
               ),
@@ -119,6 +123,15 @@ const PeopleTable: React.FC = () => {
                   {row.death}
                 </Link>
               ),
+            },
+            {
+              header: 'Grave number',
+              field: 'grave_number',
+              renderCell: (row: Person) => (
+                <Link as={RouterLink} to={`/people/${row.grave_number}`} sx={{ color: 'unset' }}>
+                  {row.grave_number}
+                </Link>
+              )
             },
             {
               header: 'ID',
@@ -149,60 +162,3 @@ const PeopleTable: React.FC = () => {
 };
 
 export default PeopleTable;
-
-function SkeletonPeopleRow() {
-  return <tr>
-    <Box
-      as="td"
-      sx={{
-        p: 2,
-        borderBottom: '1px solid',
-        borderColor: 'border.default',
-        cursor: 'pointer',
-        width: 2
-      }}
-    >
-      {/* @ts-ignore */}
-      <SkeletonAvatar size={16} square />
-    </Box>
-    <Box
-      as="td"
-      sx={{
-        p: 2,
-        borderBottom: '1px solid',
-        borderColor: 'border.default',
-        cursor: 'pointer',
-        width: 2
-      }}
-    >
-      {/* @ts-ignore */}
-      <SkeletonAvatar size={16} square /></Box>
-    <Box
-      as="td"
-      sx={{
-        p: 2,
-        borderBottom: '1px solid',
-        borderColor: 'border.default',
-        cursor: 'pointer'
-      }}
-    ><SkeletonText /></Box>
-    <Box
-      as="td"
-      sx={{
-        p: 2,
-        borderBottom: '1px solid',
-        borderColor: 'border.default',
-        cursor: 'pointer',
-      }}
-    ><SkeletonText /></Box>
-    <Box
-      as="td"
-      sx={{
-        p: 2,
-        borderBottom: '1px solid',
-        borderColor: 'border.default',
-        cursor: 'pointer',
-      }}
-    ><SkeletonText /></Box>
-  </tr>
-}

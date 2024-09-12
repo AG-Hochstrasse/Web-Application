@@ -149,7 +149,7 @@ export default function EditPeople({ session, insert }: any) {
     <>
       <PageHeader>
         <PageHeader.TitleArea>
-          <PageHeader.LeadingAction><IconButton icon={ArrowLeftIcon} aria-label="Back" variant="invisible" onClick={() => navigate("/people")} /></PageHeader.LeadingAction>
+          <PageHeader.LeadingAction><IconButton icon={ArrowLeftIcon} aria-label="Back" variant="invisible" onClick={() => history.back()} /></PageHeader.LeadingAction>
           <PageHeader.Title>{insert ? "Create new" : "Edit"} person</PageHeader.Title>
         </PageHeader.TitleArea>
       </PageHeader>
@@ -192,7 +192,7 @@ export default function EditPeople({ session, insert }: any) {
           <FormControl>
             <FormControl.Label>Birth</FormControl.Label>
             {/* @ts-ignore */}
-            <TextInput value={birth} leadingVisual={CalendarIcon} onChange={(e) => { setBirth(e.target.value ? e.target.value : null); }} />
+            <TextInput value={birth} leadingVisual={CalendarIcon} onChange={(e) => { setBirth(e.target.value); }} />
           </FormControl>
 
           <FormControl>
@@ -333,6 +333,7 @@ export default function EditPeople({ session, insert }: any) {
                   setDatabaseError(response.error)
                 }
               })
+              navigate("/people")
             }}>Create</Button> :
               <Button variant="primary" onClick={() => {
                 const a = editPerson({
@@ -358,7 +359,7 @@ export default function EditPeople({ session, insert }: any) {
                     setDatabaseError(error)
                   }
                 })
-                navigate(`/people/${id.id}`)
+                window.location.href = `/people/${id.id}`
               }}>Update</Button>
             }
           </FormControl>
