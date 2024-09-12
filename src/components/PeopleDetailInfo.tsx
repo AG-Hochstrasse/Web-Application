@@ -2,14 +2,46 @@ import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
 import { useState, useEffect, useRef } from 'react';
-import { Person } from '../Person';
-import { Box, Heading, RelativeTime, Button, Label, Dialog, Text, TabNav, IconButton } from '@primer/react';
+import { Person, Conflict, conflictablePersonFields } from '../Person';
+import { Box, Heading, RelativeTime, Button, Label, Dialog, Text, TabNav, IconButton, LabelGroup } from '@primer/react';
 
 interface PeopleDetailInfoPros {
   person: Person
+  conflicts: Conflict[]
 }
 
+const PersonDetail2 = (props: PeopleDetailInfoPros) => {
+  // Helper function to check if a field has a conflict
+  const hasConflict = (field: string) => {
+    return props.conflicts.some(conflict => conflict.field === field && conflict.type === "conflict");
+  };
+  const hasUnsure = (field: string) => {
+    return props.conflicts.some(conflict => conflict.field === field && conflict.type === "unsure")
+  }
+  return (
+    <div>
+      {conflictablePersonFields.map((field: string) => {
+        // Dynamically get the value from the person object based on field name
+        const fieldValue = props.person[field as keyof Person];
+        return (
+          fieldValue != null && (
+            <div key={field}>
+              <Text as="strong">{field.replaceAll('_', ' ').toUpperCase()} </Text>
+              {hasConflict(field) && <Label variant='severe'>Conflict</Label>}
+              {hasUnsure(field) && <Label variant='attention'>Unsure</Label>}
+              <br />
+              <Text>{fieldValue.toString()}</Text>
+              <br /><br />
+            </div>
+          )
+        );
+      })}
+    </div>
+  );
+};
+
 export default function PeopleDetailInfo(props: PeopleDetailInfoPros) {
+  return <PersonDetail2 person={props.person} conflicts={props.conflicts} />
   return (
     <>
       {props.person.birth && <><Text as="strong">Birth</Text><br />
@@ -42,7 +74,7 @@ export default function PeopleDetailInfo(props: PeopleDetailInfoPros) {
       {props.person.origin && <><Text as="strong">Origin</Text><br />
         <Text>{props.person.origin}</Text><br /><br /></>}
 
-      {props.person.grave_number && <><Text as="strong">Grave number</Text><br />
+      {props.person.grave_number && <><Text as="strong">Grave number {props.conflicts.filter((conflict) => conflict.field == "grave_number") && <Label variant='severe'>Conflict</Label>}</Text><br />
         <Text>{props.person.grave_number}</Text><br /><br /></>}
 
       {props.person.religion && <><Text as="strong">Religion</Text><br />

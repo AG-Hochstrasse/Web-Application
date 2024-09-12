@@ -3,15 +3,17 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
 import { useState, useEffect, useRef } from 'react';
 
-import { StateLabel, Box, PageHeader, RelativeTime, Button, Label, Dialog, Text, TabNav, IconButton, Stack } from '@primer/react';
+import { StateLabel, Box, PageHeader, RelativeTime, Button, Label, Dialog, Text, TabNav, IconButton, Stack, CounterLabel } from '@primer/react';
 import { NoteIcon, AlertIcon, PeopleIcon, CommentDiscussionIcon, ArrowLeftIcon } from '@primer/octicons-react';
 import { SkeletonText } from '@primer/react/drafts';
 import PeopleDetailInfo from './PeopleDetailInfo';
+import { Conflict } from '../Person';
 
 const PersonDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
 
   const [person, setPerson] = useState<any>([]);
+  const [conflicts, setConflicts] = useState<Conflict[]>([])
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,6 +24,7 @@ const PersonDetail: React.FC = () => {
 
   const navigate = useNavigate();
 
+  // fetch people
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -35,6 +38,34 @@ const PersonDetail: React.FC = () => {
         }
 
         setPerson(data[0]);
+      } catch (error) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError('An unknown error occurred');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // fetch conflicts
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('conflicts')
+          .select('*')
+          .eq('person', id);
+
+        if (error) {
+          throw error;
+        }
+
+        setConflicts(data);
       } catch (error) {
         if (error instanceof Error) {
           setError(error.message);
@@ -138,13 +169,13 @@ const PersonDetail: React.FC = () => {
               <PeopleIcon size={16} /> <Text ml={1}>Photos</Text>
             </TabNav.Link>
             <TabNav.Link selected={selectedTab === 'conflicts'} onClick={() => setSelectedTab('conflicts')}>
-              <AlertIcon /> <Text ml={1}>Conflicts</Text>
+              <AlertIcon /> <Text ml={1}>Conflicts <CounterLabel>{conflicts.length}</CounterLabel></Text>
             </TabNav.Link>
           </TabNav>
 
           {/* Content for each tab */}
           <Box mt={3}>
-            {selectedTab === 'details' && <PeopleDetailInfo person={person} />}
+            {selectedTab === 'details' && <PeopleDetailInfo person={person} conflicts={conflicts} />}
             {selectedTab === 'discussion' && <Text>Coming soon...</Text>}
             {selectedTab === 'photos' && <Text>Coming soon...</Text>}
             {selectedTab === 'conflicts' && <Text>Coming soon...</Text>}

@@ -56,3 +56,38 @@ export interface UnIdentifiedPerson {
   children: number | null;
   burial_day: string | null;
 }
+
+export interface Conflict {
+  id: number;
+  created_at: string;
+  person: number;
+  field: string; //TODO: create enum type
+  comment: string | null;
+  type: string; //TODO: create enum type
+  open: boolean;
+}
+
+export const conflictablePersonFields = [
+  "name",
+  "first_name",
+  "birth",
+  "death",
+  "birth_place",
+  "death_place",
+  "death_cause",
+  "residence",
+  "born_as",
+  "work",
+  "age",
+  "origin",
+  "grave_number",
+  "religion",
+  "insurance_doc_number",
+  "death_register_number",
+  "stay_time",
+  "work_start_bs",
+  "death_time",
+  "marriage_status",
+  "children",
+  "burial_day"
+]
