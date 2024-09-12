@@ -14,13 +14,14 @@ import NotFound from './components/NotFound';
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Link as RouterLink, Navigate } from 'react-router-dom';
-import { ThemeProvider, Box } from '@primer/react'
+import { ThemeProvider, Box, Spinner, Stack, Text } from '@primer/react'
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { Auth } from '@supabase/auth-ui-react';
 import { supabase } from './services/supabaseClient';
 import WhatsNew from './components/WhatsNew';
 
 export function App() {
+  const [loading, setLoading] = useState(true);
   const [session, setSession] = useState<any>();
   
   useEffect(() => {
@@ -31,10 +32,14 @@ export function App() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+      setLoading(false);
     });
     return () => subscription.unsubscribe();
   }, []);
   
+  if (loading) {
+    return <Stack direction="horizontal" align="center"><Spinner /><Text>Loading...</Text></Stack>
+  }
 
   if (!session) {
     return (
