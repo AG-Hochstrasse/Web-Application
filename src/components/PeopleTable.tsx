@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '../services/supabaseClient';
-import { Octicon, Box, Link, RelativeTime, Stack, Spinner, Text, Button, TextInput, IconButton } from '@primer/react';
-import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
+import { Octicon, Box, Link, RelativeTime, Stack, Spinner, Text, TextInput, IconButton } from '@primer/react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { ArrowRightIcon, EyeClosedIcon, PlusIcon, RepoIcon, SearchIcon } from '@primer/octicons-react';
-import { SkeletonAvatar, SkeletonText, Table } from '@primer/react/drafts';
+import { Table } from '@primer/react/drafts';
 import { Banner, DataTable } from '@primer/react/experimental';
 
 import StateIcon from './StateIcon';
@@ -11,7 +11,7 @@ import StateIcon from './StateIcon';
 import { Person } from '../Person';
 import { TableContainer } from '@primer/react/lib-esm/DataTable/Table';
 
-const PeopleTable: React.FC = () => {
+export default function PeopleTable({ all }: any) {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -26,7 +26,6 @@ const PeopleTable: React.FC = () => {
     row.grave_number?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const location = useLocation();
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -79,7 +78,7 @@ const PeopleTable: React.FC = () => {
       <TableContainer>
         <Table.Title id="people">People</Table.Title>
         <Table.Actions><IconButton icon={PlusIcon} aria-label="Add" variant="invisible" onClick={() => navigate("/people/new")} />
-          {location.pathname != "/people" && <IconButton icon={ArrowRightIcon} aria-label="Show all" variant="invisible" onClick={() => navigate("/people/new")} />}
+          {!all && <IconButton icon={ArrowRightIcon} aria-label="Show all" variant="invisible" onClick={() => navigate("/people")} />}
         </Table.Actions>
         <TextInput
           leadingVisual={SearchIcon}
@@ -160,5 +159,3 @@ const PeopleTable: React.FC = () => {
   );
 
 };
-
-export default PeopleTable;

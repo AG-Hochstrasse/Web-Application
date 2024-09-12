@@ -19,6 +19,12 @@ export default function AppHeader(props: any) {
       </Header.Link>
     </Header.Item>
 
+    <Header.Item>
+      <Header.Link sx={{ fontWeight: 'normal' }} as={RouterLink} to="/people" >
+        People
+      </Header.Link>
+    </Header.Item>
+
     <Header.Item full >
       <Header.Link sx={{ fontWeight: 'normal' }} as={RouterLink} to="/about" >
         About

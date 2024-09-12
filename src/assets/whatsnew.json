@@ -1,0 +1,21 @@
+[
+    {
+        "description": "Not found page added",
+        "version": "0.3.0"
+    },
+    {
+        "description": "This page added",
+        "version": "0.3.0",
+        "thread": 25
+    },
+    {
+        "description": "Updated data fields",
+        "version": "0.2.0",
+        "thread": 19
+    },
+    {
+        "description": "Data is now searchable",
+        "version": "0.2.0",
+        "thread": 18
+    }
+]

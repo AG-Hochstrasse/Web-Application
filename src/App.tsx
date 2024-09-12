@@ -10,6 +10,7 @@ import PersonDetail from './components/PersonDetail';
 import PeopleTable from './components/PeopleTable';
 import AppAccount from './components/AppAccount';
 import EditPeople from './components/EditPeople';
+import NotFound from './components/NotFound';
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Link as RouterLink, Navigate } from 'react-router-dom';
@@ -17,6 +18,7 @@ import { ThemeProvider, Box } from '@primer/react'
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { Auth } from '@supabase/auth-ui-react';
 import { supabase } from './services/supabaseClient';
+import WhatsNew from './components/WhatsNew';
 
 export function App() {
   const [session, setSession] = useState<any>();
@@ -75,12 +77,14 @@ export function App() {
         >
           <Routes>
             <Route path="/" element={<AppHome session={session}/>} />
-            <Route path="/people" element={<PeopleTable />} />
+            <Route path="/people" element={<PeopleTable all />} />
             <Route path="/people/:id" element={<PersonDetail />} />
             <Route path="/people/:id/edit" element={<EditPeople session={session} />} />
-            <Route path="/about" element={<AppAbout />} />
-            <Route path="/account" element={<AppAccount session={session} />} />
             <Route path="/people/new" element={<EditPeople session={session} insert />} />
+            <Route path="/about" element={<AppAbout />} />
+            <Route path="/whatsnew" element={<WhatsNew all />} />
+            <Route path="/account" element={<AppAccount session={session} />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Box>
 
