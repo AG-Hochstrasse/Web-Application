@@ -1,3 +1,5 @@
+import { UUID } from "crypto";
+
 export interface Person {
   id: string;
   hidden: boolean;
@@ -55,4 +57,10 @@ export interface UnIdentifiedPerson {
   marriage_status: string | null;
   children: number | null;
   burial_day: string | null;
+}
+
+export interface User {
+  id: UUID
+  created_at: Date
+  username: string | null
 }

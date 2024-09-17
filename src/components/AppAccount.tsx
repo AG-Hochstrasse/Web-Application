@@ -1,45 +1,43 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { supabase } from '../services/supabaseClient';
+import { User } from '../Interfaces';
+import { FormControl, TextInput, Box, Stack, Spinner, Text, Button } from '@primer/react';
 
 export default function AppAccount({ session }: any) {
   const [loading, setLoading] = useState(true)
-  const [username, setUsername] = useState<string | null>(null)
-  const [website, setWebsite] = useState<string | null>(null)
-  const [avatar_url, setAvatarUrl] = useState<string | null>(null)
+  const [user, setUser] = useState<User | null>(null)
 
-  // useEffect(() => {
-  //   let ignore = false
-  //   async function getProfile() {
-  //     setLoading(true)
-  //     const { user } = session
+  useEffect(() => {
+    let ignore = false
+    async function getProfile() {
+      setLoading(true)
+      const { user } = session
 
-  //     const { data, error } = await supabase
-  //       .from('profiles')
-  //       .select(`username, website, avatar_url`)
-  //       .eq('id', user.id)
-  //       .single()
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user', user.id)
+        .single()
 
-  //     if (!ignore) {
-  //       if (error) {
-  //         alert(JSON.stringify(error))
-  //         console.warn(error)
-  //       } else if (data) {
-  //         setUsername(data.username)
-  //         setWebsite(data.website)
-  //         setAvatarUrl(data.avatar_url)
-  //       }
-  //     }
+      if (!ignore) {
+        if (error) {
+          alert(JSON.stringify(error))
+          console.warn(error)
+        } else if (data) {
+          setUser(data)
+        }
+      }
 
-  //     setLoading(false)
-  //   }
+      setLoading(false)
+    }
 
-  //   //getProfile()
+    getProfile()
 
-  //   return () => {
-  //     ignore = true
-  //   }
-  // }, [session])
+    return () => {
+      ignore = true
+    }
+  }, [session])
 
   // async function updateProfile(event: any, avatarUrl: string) {
   //   event.preventDefault()
@@ -65,9 +63,12 @@ export default function AppAccount({ session }: any) {
   //   setLoading(false)
   // }
 
+  if (loading) {
+    return <Stack direction="horizontal" align="center"><Spinner /><Text>Loading...</Text></Stack>
+  }
   return (<>
     {/* @ts-ignore */}
-    <form className="form-widget">
+    <Box as="form" >
       {/*<div>
         <label htmlFor="email">Email</label>
         <input id="email" type="text" value={session.user.email} disabled />
@@ -97,12 +98,18 @@ export default function AppAccount({ session }: any) {
           {loading ? 'Loading ...' : 'Update'}
         </button>
       </div> */}
-
-      <div>
-        <button className="button block" type="button" onClick={() => supabase.auth.signOut()}>
-          Sign Out
-        </button>
-      </div>
-    </form></>
+      <Stack>
+        <FormControl>
+          <FormControl.Label>Username</FormControl.Label>
+          {/* @ts-ignore */}
+          <TextInput value={user?.username}></TextInput>
+        </FormControl>
+        <FormControl>
+          <Button onClick={() => supabase.auth.signOut()}>
+            Sign Out
+          </Button>
+        </FormControl>
+      </Stack>
+    </Box></>
   )
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
 import { useState, useEffect, useRef } from 'react';
-import { Person } from '../Person';
+import { Person } from '../Interfaces';
 import { Box, Heading, RelativeTime, Button, Label, Dialog, Text, TabNav, IconButton } from '@primer/react';
 
 interface PeopleDetailInfoPros {
