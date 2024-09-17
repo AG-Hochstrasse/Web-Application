@@ -8,67 +8,67 @@ export default function AppAccount({ session }: any) {
   const [website, setWebsite] = useState<string | null>(null)
   const [avatar_url, setAvatarUrl] = useState<string | null>(null)
 
-  useEffect(() => {
-    let ignore = false
-    async function getProfile() {
-      setLoading(true)
-      const { user } = session
+  // useEffect(() => {
+  //   let ignore = false
+  //   async function getProfile() {
+  //     setLoading(true)
+  //     const { user } = session
 
-      const { data, error } = await supabase
-        .from('profiles')
-        .select(`username, website, avatar_url`)
-        .eq('id', user.id)
-        .single()
+  //     const { data, error } = await supabase
+  //       .from('profiles')
+  //       .select(`username, website, avatar_url`)
+  //       .eq('id', user.id)
+  //       .single()
 
-      if (!ignore) {
-        if (error) {
-          alert(JSON.stringify(error))
-          console.warn(error)
-        } else if (data) {
-          setUsername(data.username)
-          setWebsite(data.website)
-          setAvatarUrl(data.avatar_url)
-        }
-      }
+  //     if (!ignore) {
+  //       if (error) {
+  //         alert(JSON.stringify(error))
+  //         console.warn(error)
+  //       } else if (data) {
+  //         setUsername(data.username)
+  //         setWebsite(data.website)
+  //         setAvatarUrl(data.avatar_url)
+  //       }
+  //     }
 
-      setLoading(false)
-    }
+  //     setLoading(false)
+  //   }
 
-    getProfile()
+  //   //getProfile()
 
-    return () => {
-      ignore = true
-    }
-  }, [session])
+  //   return () => {
+  //     ignore = true
+  //   }
+  // }, [session])
 
-  async function updateProfile(event: any, avatarUrl: string) {
-    event.preventDefault()
+  // async function updateProfile(event: any, avatarUrl: string) {
+  //   event.preventDefault()
 
-    setLoading(true)
-    const { user } = session
+  //   setLoading(true)
+  //   const { user } = session
 
-    const updates = {
-      id: user.id,
-      username,
-      website,
-      avatar_url: avatarUrl,
-      updated_at: new Date(),
-    }
+  //   const updates = {
+  //     id: user.id,
+  //     username,
+  //     website,
+  //     avatar_url: avatarUrl,
+  //     updated_at: new Date(),
+  //   }
 
-    const { error } = await supabase.from('profiles').upsert(updates)
+  //   const { error } = await supabase.from('profiles').upsert(updates)
 
-    if (error) {
-      alert(JSON.stringify(error))
-    } else {
-      setAvatarUrl(avatarUrl)
-    }
-    setLoading(false)
-  }
+  //   if (error) {
+  //     alert(JSON.stringify(error))
+  //   } else {
+  //     setAvatarUrl(avatarUrl)
+  //   }
+  //   setLoading(false)
+  // }
 
   return (<>
     {/* @ts-ignore */}
-    <form onSubmit={updateProfile} className="form-widget">
-      <div>
+    <form className="form-widget">
+      {/*<div>
         <label htmlFor="email">Email</label>
         <input id="email" type="text" value={session.user.email} disabled />
       </div>
@@ -96,7 +96,7 @@ export default function AppAccount({ session }: any) {
         <button className="button block primary" type="submit" disabled={loading}>
           {loading ? 'Loading ...' : 'Update'}
         </button>
-      </div>
+      </div> */}
 
       <div>
         <button className="button block" type="button" onClick={() => supabase.auth.signOut()}>
