@@ -1,0 +1,49 @@
+import React from "react";
+import { Conflict, conflictablePersonFields } from "../Person";
+import { Label, Octicon, Text, Stack, Box } from "@primer/react";
+import { DataTable, Table } from '@primer/react/experimental'
+import { AlertFillIcon, AlertIcon, CheckIcon } from "@primer/octicons-react";
+
+interface PersonConflictListProps {
+    conflicts: Conflict[];
+}
+
+export default function PersonConflictList(props: PersonConflictListProps) {
+    const openConflicts = (closed: boolean = false) => {
+        return props.conflicts.filter((conflict) => closed ? !conflict.open : conflict.open)
+    }
+    return (
+        <Table.Container>
+            <DataTable
+                aria-labelledby="conflicts"
+                aria-describedby="conflicts-subtitle"
+                data={props.conflicts}
+                columns={[
+                    {
+                        rowHeader: true,
+                        header: () => {
+                            return (
+                                <>
+                                    <Box sx={{ color: 'black' }}>
+                                        <Octicon icon={AlertFillIcon} />
+                                        <Text sx={{ padding: 2 }} >{openConflicts().length} Open</Text>
+                                    </Box>
+                                    <Box>
+                                        <Octicon icon={CheckIcon} />
+                                        <Text sx={{ padding: 2 }} >{openConflicts(true).length} Closed</Text>
+                                    </Box>
+                                </>
+                            )
+                        },
+                        field: 'type',
+                        renderCell: (row: Conflict) => {
+                            return <Box>
+                                <Octicon icon={AlertFillIcon} /> <Text sx={{ padding: 2 }}>{row.field.replaceAll("_", " ").toUpperCase()}</Text>
+                            </Box>
+                        }
+                    }
+                ]}
+            />
+        </Table.Container>
+    )
+}

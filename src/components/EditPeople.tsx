@@ -22,20 +22,20 @@ async function createPerson(newData: UnIdentifiedPerson) {
   return { data: data, error: error }
 }
 
-async function editPerson(data: UnIdentifiedPerson, id: string) {
-  if (data.birth == "null") {
-    data.birth = null
+async function editPerson(person: UnIdentifiedPerson, id: string) {
+  if (person.birth == "null") {
+    person.birth = null
   }
-  if (data.death == "null") {
-    data.death = null
+  if (person.death == "null") {
+    person.death = null
   }
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('people')
-    .update(data)
+    .update(person)
     .eq('id', id)
 
-  return error
+  return {data: data, error: error }
 }
 export default function EditPeople({ session, insert }: any) {
   const navigate = useNavigate()
@@ -48,13 +48,13 @@ export default function EditPeople({ session, insert }: any) {
 
   const [name, setName] = useState<string>("")
   const [firstName, setFirstName] = useState<string | null>(null)
-  const [birth, setBirth] = useState<string | null>(person?.birth ? person.birth : null)
-  const [death, setDeath] = useState<string | null>(person?.death ? person.death : null)
-  const [birthPlace, setBirthPlace] = useState<string | null>(person?.birth_place ? person.birth_place : null)
-  const [deathPlace, setDeathPlace] = useState<string | null>(person?.death_place ? person.death_place : null)
-  const [deathCause, setDeathCause] = useState<string | null>(person?.death_cause ? person.death_cause : null)
-  const [residence, setResidence] = useState<string | null>(person?.residence ? person.residence : null)
-  const [comments, setComments] = useState<string>(person ? person.comments : "")
+  const [birth, setBirth] = useState<string | null>(null)
+  const [death, setDeath] = useState<string | null>(null)
+  const [birthPlace, setBirthPlace] = useState<string | null>(null)
+  const [deathPlace, setDeathPlace] = useState<string | null>(null)
+  const [deathCause, setDeathCause] = useState<string | null>(null)
+  const [residence, setResidence] = useState<string | null>(null)
+  const [comments, setComments] = useState<string | null>(null)
 
   const [bornAs, setBornAs] = useState<string | null>(null)
   const [work, setWork] = useState<string | null>(null)
@@ -354,9 +354,9 @@ export default function EditPeople({ session, insert }: any) {
                   children: children,
                   burial_day: burialDay
                 }, id.id!)
-                a.then((error) => {
-                  if (error) {
-                    setDatabaseError(error)
+                a.then((response) => {
+                  if (response.error) {
+                    setDatabaseError(response.error)
                   }
                 })
                 window.location.href = `/people/${id.id}`

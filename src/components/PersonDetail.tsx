@@ -8,6 +8,7 @@ import { NoteIcon, AlertIcon, PeopleIcon, CommentDiscussionIcon, ArrowLeftIcon }
 import { SkeletonText } from '@primer/react/drafts';
 import PersonDetailInfo from './PersonDetailInfo';
 import { Conflict } from '../Person';
+import PersonConflictList from './PersonConflictList';
 
 const PersonDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -178,7 +179,7 @@ const PersonDetail: React.FC = () => {
             {selectedTab === 'details' && <PersonDetailInfo person={person} conflicts={conflicts} />}
             {selectedTab === 'discussion' && <Text>Coming soon...</Text>}
             {selectedTab === 'photos' && <Text>Coming soon...</Text>}
-            {selectedTab === 'conflicts' && <Text>Coming soon...</Text>}
+            {selectedTab === 'conflicts' && <PersonConflictList conflicts={conflicts} />}
           </Box>
         </PageHeader.Navigation>
       </PageHeader>
