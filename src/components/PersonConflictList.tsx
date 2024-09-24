@@ -1,8 +1,9 @@
 import React from "react";
 import { Conflict, conflictablePersonFields } from "../Person";
-import { Label, Octicon, Text, Stack, Box } from "@primer/react";
+import { Label, Octicon, Text, Stack, Box, Link } from "@primer/react";
 import { DataTable, Table } from '@primer/react/experimental'
 import { AlertFillIcon, AlertIcon, CheckIcon } from "@primer/octicons-react";
+import { Link as RouterLink } from 'react-router-dom'
 
 interface PersonConflictListProps {
     conflicts: Conflict[];
@@ -38,7 +39,7 @@ export default function PersonConflictList(props: PersonConflictListProps) {
                         field: 'type',
                         renderCell: (row: Conflict) => {
                             return <Box>
-                                <Octicon icon={AlertFillIcon} /> <Text sx={{ padding: 2 }}>{row.field.replaceAll("_", " ").toUpperCase()}</Text>
+                                <Octicon icon={row.type == "conflict" ? AlertFillIcon : AlertIcon} /> <Link as={RouterLink} to={`/conflicts/${row.id}`} sx={{ padding: 2 }}>{row.field.replaceAll("_", " ").toUpperCase()}</Link>
                             </Box>
                         }
                     }

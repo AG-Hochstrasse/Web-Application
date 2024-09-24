@@ -25,7 +25,7 @@ const PersonDetail: React.FC = () => {
 
   const navigate = useNavigate();
 
-  // fetch people
+  // fetch person
   useEffect(() => {
     const fetchData = async () => {
       try {
