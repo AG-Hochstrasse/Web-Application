@@ -7,7 +7,7 @@ import { StateLabel, Box, PageHeader, RelativeTime, Button, Label, Dialog, Text,
 import { NoteIcon, AlertIcon, PeopleIcon, CommentDiscussionIcon, ArrowLeftIcon } from '@primer/octicons-react';
 import { SkeletonText } from '@primer/react/drafts';
 import PersonDetailInfo from './PersonDetailInfo';
-import { Conflict } from '../Person';
+import { Conflict } from '../Interfaces';
 import PersonConflictList from './PersonConflictList';
 
 const PersonDetail: React.FC = () => {

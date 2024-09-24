@@ -58,7 +58,7 @@ export interface UnIdentifiedPerson {
 }
 
 export interface User { // maybe stale
-  id: UUID
+  id: string
   created_at: Date
   username: string | null
 }

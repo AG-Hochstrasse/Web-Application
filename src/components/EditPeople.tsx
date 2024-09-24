@@ -45,6 +45,7 @@ export default function EditPeople({ session, insert }: any) {
   const [error, setError] = useState<string | null>(null)
   const [databaseError, setDatabaseError] = useState<PostgrestError | null>(null)
   const [loading, setLoading] = useState(!insert)
+  const [submitting, setSubmitting] = useState(false)
 
   const [name, setName] = useState<string>("")
   const [firstName, setFirstName] = useState<string | null>(null)
@@ -54,7 +55,7 @@ export default function EditPeople({ session, insert }: any) {
   const [deathPlace, setDeathPlace] = useState<string | null>(null)
   const [deathCause, setDeathCause] = useState<string | null>(null)
   const [residence, setResidence] = useState<string | null>(null)
-  const [comments, setComments] = useState<string | null>(null)
+  const [comments, setComments] = useState<string>("")
 
   const [bornAs, setBornAs] = useState<string | null>(null)
   const [work, setWork] = useState<string | null>(null)
@@ -309,7 +310,7 @@ export default function EditPeople({ session, insert }: any) {
           </Details>
 
           <FormControl>
-            {insert ? <Button variant="primary" onClick={() => {
+            {insert ? <Button variant="primary" loading={submitting} disabled={submitting} onClick={() => {
               const a = createPerson({
                 name: name, first_name: firstName, birth: String(birth), hidden: true, state: "open", death: String(death), birth_place: birthPlace, death_place: deathPlace,
                 death_cause: deathCause, residence: residence, comments: comments,
@@ -333,9 +334,12 @@ export default function EditPeople({ session, insert }: any) {
                   setDatabaseError(response.error)
                 }
               })
-              navigate("/people")
+              setSubmitting(true)
+              setTimeout(() => {
+                navigate("/people")
+              }, 1000)
             }}>Create</Button> :
-              <Button variant="primary" onClick={() => {
+              <Button variant="primary" loading={submitting} disabled={submitting} onClick={() => {
                 const a = editPerson({
                   name: name, first_name: firstName, birth: String(birth), hidden: true, state: "open", death: String(death), birth_place: birthPlace, death_place: deathPlace,
                   death_cause: deathCause, residence: residence, comments: comments,
@@ -359,7 +363,10 @@ export default function EditPeople({ session, insert }: any) {
                     setDatabaseError(response.error)
                   }
                 })
-                window.location.href = `/people/${id.id}`
+                setSubmitting(true)
+                setTimeout(() => {
+                  window.location.href = `/people/${id.id}`
+                }, 1000)
               }}>Update</Button>
             }
           </FormControl>
