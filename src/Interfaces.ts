@@ -57,6 +57,11 @@ export interface UnIdentifiedPerson {
   burial_day: string | null;
 }
 
+export interface User { // maybe stale
+  id: UUID
+  created_at: Date
+  username: string | null
+}
 
 export interface Conflict {
   id: number;

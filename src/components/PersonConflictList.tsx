@@ -1,5 +1,5 @@
 import React from "react";
-import { Conflict, conflictablePersonFields } from "../Person";
+import { Conflict, conflictablePersonFields } from "../Interfaces";
 import { Label, Octicon, Text, Stack, Box, Link } from "@primer/react";
 import { DataTable, Table } from '@primer/react/experimental'
 import { AlertFillIcon, AlertIcon, CheckIcon } from "@primer/octicons-react";

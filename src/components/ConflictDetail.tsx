@@ -1,5 +1,5 @@
 import { ArrowLeftIcon } from "@primer/octicons-react";
-import { Conflict } from "../Person";
+import { Conflict } from "../Interfaces";
 import { Button, IconButton, PageHeader, Stack, Text, Spinner, StateLabel, RelativeTime, Box } from "@primer/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "../services/supabaseClient";
