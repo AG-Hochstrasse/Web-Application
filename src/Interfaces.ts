@@ -1,5 +1,3 @@
-import { UUID } from "crypto";
-
 export interface Person {
   id: string;
   hidden: boolean;
@@ -59,7 +57,7 @@ export interface UnIdentifiedPerson {
   burial_day: string | null;
 }
 
-export interface User {
+export interface User { // maybe stale
   id: UUID
   created_at: Date
   username: string | null

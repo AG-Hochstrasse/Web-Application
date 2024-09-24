@@ -19,6 +19,7 @@ import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { Auth } from '@supabase/auth-ui-react';
 import { supabase } from './services/supabaseClient';
 import WhatsNew from './components/WhatsNew';
+import ConflictDetail from './components/ConflictDetail';
 
 export function App() {
   const [loading, setLoading] = useState(true);
@@ -86,6 +87,7 @@ export function App() {
             <Route path="/people/:id" element={<PersonDetail />} />
             <Route path="/people/:id/edit" element={<EditPeople session={session} />} />
             <Route path="/people/new" element={<EditPeople session={session} insert />} />
+            <Route path="/conflicts/:id" element={<ConflictDetail />} />
             <Route path="/about" element={<AppAbout />} />
             <Route path="/whatsnew" element={<WhatsNew all />} />
             <Route path="/account" element={<AppAccount session={session} />} />
