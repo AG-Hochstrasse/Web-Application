@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../services/supabaseClient";
-import { Person, UnIdentifiedPerson } from "../Person";
+import { Person, UnIdentifiedPerson } from "../Interfaces";
 import { PageHeader, Box, IconButton, FormControl, TextInput, Spinner, Stack, Text, Textarea, Button, Details, useDetails } from '@primer/react';
 import { ArrowLeftIcon, CalendarIcon, ClockIcon, FoldIcon, NumberIcon } from '@primer/octicons-react';
 import { useNavigate, useParams } from "react-router-dom";

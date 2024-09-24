@@ -1,12 +1,12 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { supabase } from '../services/supabaseClient';
+import { User } from '../Interfaces';
+import { FormControl, TextInput, Box, Stack, Spinner, Text, Button } from '@primer/react';
 
 export default function AppAccount({ session }: any) {
   const [loading, setLoading] = useState(true)
-  const [username, setUsername] = useState<string | null>(null)
-  const [website, setWebsite] = useState<string | null>(null)
-  const [avatar_url, setAvatarUrl] = useState<string | null>(null)
+  const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
     let ignore = false
@@ -16,8 +16,8 @@ export default function AppAccount({ session }: any) {
 
       const { data, error } = await supabase
         .from('profiles')
-        .select(`username, website, avatar_url`)
-        .eq('id', user.id)
+        .select('*')
+        .eq('user', user.id)
         .single()
 
       if (!ignore) {
@@ -25,9 +25,7 @@ export default function AppAccount({ session }: any) {
           alert(JSON.stringify(error))
           console.warn(error)
         } else if (data) {
-          setUsername(data.username)
-          setWebsite(data.website)
-          setAvatarUrl(data.avatar_url)
+          setUser(data)
         }
       }
 
@@ -41,34 +39,37 @@ export default function AppAccount({ session }: any) {
     }
   }, [session])
 
-  async function updateProfile(event: any, avatarUrl: string) {
-    event.preventDefault()
+  // async function updateProfile(event: any, avatarUrl: string) {
+  //   event.preventDefault()
 
-    setLoading(true)
-    const { user } = session
+  //   setLoading(true)
+  //   const { user } = session
 
-    const updates = {
-      id: user.id,
-      username,
-      website,
-      avatar_url: avatarUrl,
-      updated_at: new Date(),
-    }
+  //   const updates = {
+  //     id: user.id,
+  //     username,
+  //     website,
+  //     avatar_url: avatarUrl,
+  //     updated_at: new Date(),
+  //   }
 
-    const { error } = await supabase.from('profiles').upsert(updates)
+  //   const { error } = await supabase.from('profiles').upsert(updates)
 
-    if (error) {
-      alert(JSON.stringify(error))
-    } else {
-      setAvatarUrl(avatarUrl)
-    }
-    setLoading(false)
+  //   if (error) {
+  //     alert(JSON.stringify(error))
+  //   } else {
+  //     setAvatarUrl(avatarUrl)
+  //   }
+  //   setLoading(false)
+  // }
+
+  if (loading) {
+    return <Stack direction="horizontal" align="center"><Spinner /><Text>Loading...</Text></Stack>
   }
-
   return (<>
     {/* @ts-ignore */}
-    <form onSubmit={updateProfile} className="form-widget">
-      <div>
+    <Box as="form" >
+      {/*<div>
         <label htmlFor="email">Email</label>
         <input id="email" type="text" value={session.user.email} disabled />
       </div>
@@ -96,13 +97,19 @@ export default function AppAccount({ session }: any) {
         <button className="button block primary" type="submit" disabled={loading}>
           {loading ? 'Loading ...' : 'Update'}
         </button>
-      </div>
-
-      <div>
-        <button className="button block" type="button" onClick={() => supabase.auth.signOut()}>
-          Sign Out
-        </button>
-      </div>
-    </form></>
+      </div> */}
+      <Stack>
+        <FormControl>
+          <FormControl.Label>Username</FormControl.Label>
+          {/* @ts-ignore */}
+          <TextInput value={user?.username}></TextInput>
+        </FormControl>
+        <FormControl>
+          <Button onClick={() => supabase.auth.signOut()}>
+            Sign Out
+          </Button>
+        </FormControl>
+      </Stack>
+    </Box></>
   )
 }

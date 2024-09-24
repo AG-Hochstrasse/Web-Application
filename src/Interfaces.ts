@@ -10,7 +10,7 @@ export interface Person {
   death_place: string | null;
   death_cause: string | null;
   residence: string | null;
-  comments: string | null;
+  comments: string;
   created_at: string;
   born_as: string | null;
   work: string | null;
@@ -40,7 +40,7 @@ export interface UnIdentifiedPerson {
   death_place: string | null;
   death_cause: string | null;
   residence: string | null;
-  comments: string | null;
+  comments: string;
   born_as: string | null;
   work: string | null;
   age: number | null;
@@ -56,6 +56,7 @@ export interface UnIdentifiedPerson {
   children: number | null;
   burial_day: string | null;
 }
+
 
 export interface Conflict {
   id: number;

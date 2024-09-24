@@ -8,7 +8,7 @@ import { Banner, DataTable } from '@primer/react/experimental';
 
 import StateIcon from './StateIcon';
 
-import { Person } from '../Person';
+import { Person } from '../Interfaces';
 import { TableContainer } from '@primer/react/lib-esm/DataTable/Table';
 
 export default function PeopleTable({ all }: any) {
