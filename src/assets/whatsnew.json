@@ -1,5 +1,10 @@
 [
     {
+        "description": "Fixed bug when editing people",
+        "version": "0.4.1",
+        "thread": 45
+    },
+    {
         "description": "Added conflicts. Conflicts let you mark data fields as conflicting, unsure or confirmed.",
         "version": "0.4.0",
         "thread": 13
