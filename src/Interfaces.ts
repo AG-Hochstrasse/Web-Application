@@ -63,13 +63,21 @@ export interface User { // maybe stale
   username: string | null
 }
 
+
+export enum ConflictType {
+  "conflict",
+  "not_confirmed",
+  "improvememt",
+  "confirmed"
+}
+
 export interface Conflict {
   id: number;
   created_at: string;
   person: number;
   field: string; //TODO: create enum type
   comment: string | null;
-  type: string; //TODO: create enum type
+  type: "conflict" | "not_confirmed" | "improvement" | "confirmed";
   open: boolean;
 }
 
