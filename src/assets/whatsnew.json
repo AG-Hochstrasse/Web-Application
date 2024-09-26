@@ -1,5 +1,10 @@
 [
     {
+        "description": "Updated conflict page when a person has no conflicts",
+        "version": "0.4.2",
+        "thread": 50
+    },
+    {
         "description": "Fixed bug when editing people",
         "version": "0.4.1",
         "thread": 45

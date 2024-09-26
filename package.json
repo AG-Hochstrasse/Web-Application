@@ -1,6 +1,6 @@
 {
   "name": "ag-hochstrasse-web-application",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "private": true,
   "dependencies": {
     "@primer/css": "^21.3.6",
