@@ -170,7 +170,7 @@ const PersonDetail: React.FC = () => {
               <PeopleIcon size={16} /> <Text ml={1}>Photos</Text>
             </TabNav.Link>
             <TabNav.Link selected={selectedTab === 'conflicts'} onClick={() => setSelectedTab('conflicts')}>
-              <AlertIcon /> <Text ml={1}>Conflicts <CounterLabel>{conflicts.length}</CounterLabel></Text>
+              <AlertIcon /> <Text ml={1}>Conflicts {conflicts.length > 0 && <CounterLabel>{conflicts.length}</CounterLabel>}</Text>
             </TabNav.Link>
           </TabNav>
 
