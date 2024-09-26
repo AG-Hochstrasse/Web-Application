@@ -1,5 +1,10 @@
 [
     {
+        "description": "Added header link to updates",
+        "version": "0.4.3",
+        "thread": 53
+    },
+    {
         "description": "Updated conflict page when a person has no conflicts",
         "version": "0.4.2",
         "thread": 50
