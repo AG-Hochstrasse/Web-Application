@@ -13,6 +13,9 @@ export default function PersonConflictList(props: PersonConflictListProps) {
     const openConflicts = (closed: boolean = false) => {
         return props.conflicts.filter((conflict) => closed ? !conflict.open : conflict.open)
     }
+    if (openConflicts().length == 0) {
+        return <Text>This person has no conflicts.</Text>
+    }
     return (
         <Table.Container>
             <DataTable
