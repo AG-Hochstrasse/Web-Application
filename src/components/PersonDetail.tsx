@@ -4,7 +4,7 @@ import { supabase } from '../services/supabaseClient';
 import { useState, useEffect, useRef } from 'react';
 
 import { StateLabel, Box, PageHeader, RelativeTime, Button, Label, Dialog, Text, TabNav, IconButton, Stack, CounterLabel } from '@primer/react';
-import { NoteIcon, AlertIcon, PeopleIcon, CommentDiscussionIcon, ArrowLeftIcon } from '@primer/octicons-react';
+import { NoteIcon, AlertIcon, PeopleIcon, CommentDiscussionIcon, ArrowLeftIcon, CheckCircleIcon } from '@primer/octicons-react';
 import { SkeletonText } from '@primer/react/drafts';
 import PersonDetailInfo from './PersonDetailInfo';
 import { Conflict } from '../Interfaces';
@@ -170,7 +170,10 @@ const PersonDetail: React.FC = () => {
               <PeopleIcon size={16} /> <Text ml={1}>Photos</Text>
             </TabNav.Link>
             <TabNav.Link selected={selectedTab === 'conflicts'} onClick={() => setSelectedTab('conflicts')}>
-              <AlertIcon /> <Text ml={1}>Conflicts {conflicts.length > 0 && <CounterLabel>{conflicts.length}</CounterLabel>}</Text>
+              <AlertIcon /> <Text ml={1}>Conflicts {conflicts.length > 0 && <CounterLabel>{conflicts.filter((conflict) => conflict.open).length /* don't need to filter by type because 'confirmed's are always closed */}</CounterLabel>}</Text>
+            </TabNav.Link>
+            <TabNav.Link selected={selectedTab === 'confirmed'} onClick={() => setSelectedTab('confirmed')}>
+              <CheckCircleIcon size={16} /> <Text ml={1}>Confirmed data</Text>
             </TabNav.Link>
           </TabNav>
 
@@ -179,7 +182,8 @@ const PersonDetail: React.FC = () => {
             {selectedTab === 'details' && <PersonDetailInfo person={person} conflicts={conflicts} />}
             {selectedTab === 'discussion' && <Text>Coming soon...</Text>}
             {selectedTab === 'photos' && <Text>Coming soon...</Text>}
-            {selectedTab === 'conflicts' && <PersonConflictList conflicts={conflicts} />}
+            {selectedTab === 'conflicts' && <PersonConflictList conflicts={conflicts.filter((conflict) => conflict.type != "confirmed")} confirmed={false} /* TODO: this is not beautiful. Set default value *//>}
+            {selectedTab === 'confirmed' && <PersonConflictList conflicts={conflicts.filter((conflict) => conflict.type == "confirmed")} confirmed/>}
           </Box>
         </PageHeader.Navigation>
       </PageHeader>
