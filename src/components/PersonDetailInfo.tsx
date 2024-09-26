@@ -23,18 +23,20 @@ const PersonDetailInfo = (props: PersonDetailInfoPros) => {
       {conflictablePersonFields.map((field: string) => {
         // Dynamically get the value from the person object based on field name
         const fieldValue = props.person[field as keyof Person];
-        return (
-          fieldValue != null && (
-            <div key={field}>
-              <Text as="strong">{field.replaceAll('_', ' ').toUpperCase()} </Text>
-              {hasConflict(field) && <Label variant='severe'>Conflict</Label>}
-              {hasNotConfirmed(field) && <Label variant='attention'>Not confirmed</Label>}
-              <br />
-              <Text>{fieldValue.toString()}</Text>
-              <br /><br />
-            </div>
-          )
-        );
+        if (fieldValue) {
+          return (
+            fieldValue != null && (
+              <div key={field}>
+                <Text as="strong">{field.replaceAll('_', ' ').toUpperCase()} </Text>
+                {hasConflict(field) && <Label variant='severe'>Conflict</Label>}
+                {hasNotConfirmed(field) && <Label variant='attention'>Not confirmed</Label>}
+                <br />
+                <Text>{fieldValue.toString()}</Text>
+                <br /><br />
+              </div>
+            )
+          );
+        }
       })}
     </div>
   );
