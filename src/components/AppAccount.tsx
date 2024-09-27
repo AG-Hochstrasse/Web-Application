@@ -8,23 +8,27 @@ export default function AppAccount({ session }: any) {
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState<User | null>(null)
 
+  const [userName, setUsername] = useState<string>(user?.username ?? "")
+
   useEffect(() => {
     let ignore = false
     async function getProfile() {
       setLoading(true)
-      const { user } = session
-
+      
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('user', user.id)
+        .eq('user', session.user.id)
         .single()
 
       if (!ignore) {
         if (error) {
           console.log(error)
         } else if (data) {
+          console.log(data)
           setUser(data)
+          setUsername(data.username)
+          console.log(user)
         }
       }
 
@@ -38,29 +42,26 @@ export default function AppAccount({ session }: any) {
     }
   }, [session])
 
-  // async function updateProfile(event: any, avatarUrl: string) {
-  //   event.preventDefault()
+  async function updateProfile() {
+    setLoading(true)
+    
+    const updates = {
+      username: userName,
+      // updated_at: new Date(),
+    }
+    
+    const { error } = await supabase
+      .from('profiles')
+      .update(updates)
+      .eq("user", user?.user) // TODO
 
-  //   setLoading(true)
-  //   const { user } = session
-
-  //   const updates = {
-  //     id: user.id,
-  //     username,
-  //     website,
-  //     avatar_url: avatarUrl,
-  //     updated_at: new Date(),
-  //   }
-
-  //   const { error } = await supabase.from('profiles').upsert(updates)
-
-  //   if (error) {
-  //     alert(JSON.stringify(error))
-  //   } else {
-  //     setAvatarUrl(avatarUrl)
-  //   }
-  //   setLoading(false)
-  // }
+    if (error) {
+      alert(JSON.stringify(error))
+    } else {
+      setUsername(userName)
+    }
+    setLoading(false)
+  }
 
   if (loading) {
     return <Stack direction="horizontal" align="center"><Spinner /><Text>Loading...</Text></Stack>
@@ -101,7 +102,12 @@ export default function AppAccount({ session }: any) {
         <FormControl>
           <FormControl.Label>Username</FormControl.Label>
           {/* @ts-ignore */}
-          <TextInput value={user?.username}></TextInput>
+          <TextInput value={userName} onChange={(event) => setUsername(event.target.value)}></TextInput>
+        </FormControl>
+        <FormControl>
+          <Button onClick={() => updateProfile()} variant="primary" disabled={loading} loading={loading}>
+            Save settings
+          </Button>
         </FormControl>
         <FormControl>
           <Button onClick={() => supabase.auth.signOut()}>
