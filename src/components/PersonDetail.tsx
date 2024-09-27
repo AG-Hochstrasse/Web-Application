@@ -193,10 +193,14 @@ const PersonDetail: React.FC = () => {
           {/* @ts-ignore */}
           <Dialog.Header id="header">Title</Dialog.Header>
           <Box p={3}>
-            <Text>Some content</Text>
+            <Text>
+              Publishing a person makes it visible in generated documents using this database and for all visitors of this website (future).
+              <br /><br />
+              Closing a person marks it as done and complete. Only close a person when it's completeley done and all fields are confirmed.
+            </Text>
           </Box>
           <Box p={3} borderTop="1px solid" borderColor="border.default" display="flex" justifyContent="flex-end">
-            <Button variant="primary">Close</Button>
+            {<Button variant="primary">Close</Button>}
           </Box>
         </div>
       </Dialog>
