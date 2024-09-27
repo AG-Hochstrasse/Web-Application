@@ -7,16 +7,17 @@ import { StateLabel, Box, PageHeader, RelativeTime, Button, Label, Dialog, Text,
 import { NoteIcon, AlertIcon, PeopleIcon, CommentDiscussionIcon, ArrowLeftIcon, CheckCircleIcon } from '@primer/octicons-react';
 import { SkeletonText } from '@primer/react/drafts';
 import PersonDetailInfo from './PersonDetailInfo';
-import { Conflict } from '../Interfaces';
+import { Conflict, User } from '../Interfaces';
 import PersonConflictList from './PersonConflictList';
 
-const PersonDetail: React.FC = () => {
+export default function PersonDetail({ session }: any) {
   const { id } = useParams<{ id: string }>();
 
   const [person, setPerson] = useState<any>([]);
   const [conflicts, setConflicts] = useState<Conflict[]>([])
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null)
 
   const [isOpen, setIsOpen] = useState(false)
   const returnFocusRef = useRef(null)
@@ -24,6 +25,34 @@ const PersonDetail: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState('details');
 
   const navigate = useNavigate();
+
+  //fetch user
+  useEffect(() => {
+    let ignore = false
+    async function getProfile() {
+      setLoading(true)
+      
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user', session.user.id)
+        .single()
+
+      if (!ignore) {
+        if (error) {
+          console.log(error)
+        } else if (data) {
+          setUser(data)
+        }
+      }
+      setLoading(false)
+    }
+    getProfile()
+
+    return () => {
+      ignore = true
+    }
+  }, [session])
 
   // fetch person
   useEffect(() => {
@@ -150,7 +179,7 @@ const PersonDetail: React.FC = () => {
           Created <RelativeTime dateTime="2024-09-07T17:32:24.118969+00:00" />
         </PageHeader.Description>
         <PageHeader.Actions>
-          <Button onClick={() => {navigate(`/people/${id}/edit`)}}>Edit</Button>
+          { ((user?.read_write ?? 0) >= (person.hidden ? 3 : 4)) && <Button onClick={() => {navigate(`/people/${id}/edit`)}}>Edit</Button> }
           <Button variant="primary"
             data-testid="trigger-button"
             ref={returnFocusRef}
@@ -203,5 +232,3 @@ const PersonDetail: React.FC = () => {
     </Box>
   );
 };
-
-export default PersonDetail;

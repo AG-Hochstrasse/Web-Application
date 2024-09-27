@@ -62,6 +62,12 @@ export interface User {
   created_at: Date
   username: string | null
   user: string // assigned supabase auth user
+  read_write: number
+  create_news: boolean
+  maintainer: boolean
+  admin: boolean
+  developer: boolean
+  conflict_read_write: number
 }
 
 
