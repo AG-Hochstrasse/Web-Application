@@ -22,8 +22,7 @@ export default function AppAccount({ session }: any) {
 
       if (!ignore) {
         if (error) {
-          alert(JSON.stringify(error))
-          console.warn(error)
+          console.log(error)
         } else if (data) {
           setUser(data)
         }
