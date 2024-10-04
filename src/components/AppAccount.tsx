@@ -14,7 +14,7 @@ export default function AppAccount({ session }: any) {
     let ignore = false
     async function getProfile() {
       setLoading(true)
-      
+
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -44,12 +44,12 @@ export default function AppAccount({ session }: any) {
 
   async function updateProfile() {
     setLoading(true)
-    
+
     const updates = {
       username: userName,
       // updated_at: new Date(),
     }
-    
+
     const { error } = await supabase
       .from('profiles')
       .update(updates)
@@ -68,6 +68,28 @@ export default function AppAccount({ session }: any) {
   }
   return (<>
     {/* @ts-ignore */}
+    {user && <>
+      <Text sx={{ fontWeight: 'bold' }}>Roles</Text>
+      <ul>
+        <li>User</li>
+        {user.maintainer && <li>Maintainer</li>}
+        {user.developer && <li>Developer</li>}
+        {user.admin && <li>Admin</li>}
+      </ul>
+
+      <Text sx={{ fontWeight: 'bold' }}>Permissions</Text>
+      <ul>
+        {user.create_news && <li>Create news</li>}
+        {user.read_write >= 1 && <li>Read public people</li>}
+        {user.read_write >= 2 && <li>Read hidden people</li>}
+        {user.read_write >= 3 && <li>Write hidden people</li>}
+        {user.read_write >= 4 && <li>Write public people</li>}
+        {user.conflict_read_write >= 1 && <li>Read conflicts</li>}
+        {user.conflict_read_write >= 2 && <li>Create conflicts</li>}
+        {user.conflict_read_write >= 3 && <li>Close conflicts</li>}
+      </ul>
+    </>}
+
     <Box as="form" >
       {/*<div>
         <label htmlFor="email">Email</label>
