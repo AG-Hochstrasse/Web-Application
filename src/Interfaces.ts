@@ -57,10 +57,17 @@ export interface UnIdentifiedPerson {
   burial_day: string | null;
 }
 
-export interface User { // maybe stale
+export interface User {
   id: string
   created_at: Date
   username: string | null
+  user: string // assigned supabase auth user
+  read_write: number
+  create_news: boolean
+  maintainer: boolean
+  admin: boolean
+  developer: boolean
+  conflict_read_write: number
 }
 
 

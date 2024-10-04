@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../services/supabaseClient";
-import { Person, UnIdentifiedPerson } from "../Interfaces";
+import { Person, UnIdentifiedPerson, User } from "../Interfaces";
 import { PageHeader, Box, IconButton, FormControl, TextInput, Spinner, Stack, Text, Textarea, Button, Details, useDetails } from '@primer/react';
 import { ArrowLeftIcon, CalendarIcon, ClockIcon, FoldIcon, NumberIcon } from '@primer/octicons-react';
 import { useNavigate, useParams } from "react-router-dom";
@@ -35,7 +35,7 @@ async function editPerson(person: UnIdentifiedPerson, id: string) {
     .update(person)
     .eq('id', id)
 
-  return {data: data, error: error }
+  return { data: data, error: error }
 }
 export default function EditPeople({ session, insert }: any) {
   const navigate = useNavigate()
@@ -75,6 +75,30 @@ export default function EditPeople({ session, insert }: any) {
   const { getDetailsProps } = useDetails({
     closeOnOutsideClick: false,
   })
+
+  const [user, setUser] = useState<User | null>(null)
+
+  // fetch user
+  useEffect(() => {
+    async function getProfile() {
+      setLoading(true)
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user', session.user.id)
+        .single()
+
+      if (error) {
+        console.log(error)
+      } else if (data) {
+        console.log(data)
+        setUser(data)
+      }
+      setLoading(false)
+    }
+    getProfile()
+  }, [])
   useEffect(() => {
     if (!insert) {
       const fetchData = async () => {
@@ -132,6 +156,30 @@ export default function EditPeople({ session, insert }: any) {
     }
   }, []);
 
+  if (user) {
+    if ((!person || insert || person.hidden) && user.read_write < 3) {
+      return <>
+        <Banner
+          title="You are not allowed to write people"
+          description={<Text>You do not have the required permissions for this action. Contact your admin.</Text>}
+          variant="critical"
+        />
+        <br/>
+        <Button icon={ArrowLeftIcon} onClick={() => (navigate(-1))} />
+      </>
+    }
+    if (person && !person.hidden && user.read_write < 4) {
+      return <>
+        <Banner
+          title="You are not allowed to write public people"
+          description={<Text>You do not have the required permissions for this action. Contact your admin.</Text>}
+          variant="critical"
+        />
+        <br/>
+        <Button icon={ArrowLeftIcon} onClick={() => (navigate(-1))} />
+      </>
+    }
+  }
   if (error) return <Banner
     title="Error"
     description={

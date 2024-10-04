@@ -22,7 +22,7 @@ export default function AppHeader(props: any) {
 
     <Header.Item sx={{ mr: 0 }} >
       {/* @ts-ignore */}
-      <ProfileMenu session={props.session}/>
+      <ProfileMenu session={props.session} />
     </Header.Item>
-  </Header>
+  </Header >
 }
