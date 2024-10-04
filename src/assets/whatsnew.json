@@ -5,6 +5,46 @@
         "thread": 60
     },
     {
+        "description": "Added link to GitHub",
+        "version": "0.6.2",
+        "thread": 65
+    },
+    {
+        "description": "Home page shows fewer people",
+        "version": "0.6.1",
+        "thread": 63
+    },
+    {
+        "description": "Users are now greeted with their name",
+        "version": "0.6.0",
+        "thread": 58
+    },
+    {
+        "description": "Users can now change their display name",
+        "version": "0.6.0",
+        "thread": 58
+    },
+    {
+        "description": "Edit button is only displayed to users with permission",
+        "version": "0.6.0",
+        "thread": 58
+    },
+    {
+        "description": "Users can now check their permissions",
+        "version": "0.6.0",
+        "thread": 58
+    },
+    {
+        "description": "Warnings let users know they do not have permission",
+        "version": "0.6.0",
+        "thread": 58
+    },
+    {
+        "description": "Viewing non-existing people shows error banner",
+        "version": "0.6.0",
+        "thread": 58
+    },
+    {
         "description": "Added new conflict types: improvement and confirmed",
         "version": "0.5.0",
         "thread": 48

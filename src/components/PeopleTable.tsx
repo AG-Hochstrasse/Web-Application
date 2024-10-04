@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../services/supabaseClient';
-import { Octicon, Box, Link, RelativeTime, Stack, Spinner, Text, TextInput, IconButton } from '@primer/react';
+import { Octicon, Box, Link, RelativeTime, Stack, Spinner, Text, TextInput, IconButton, Button, Header, Heading } from '@primer/react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { ArrowRightIcon, EyeClosedIcon, PlusIcon, RepoIcon, SearchIcon } from '@primer/octicons-react';
 import { Table } from '@primer/react/drafts';
@@ -31,9 +31,13 @@ export default function PeopleTable({ all }: any) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data, error } = await supabase
-          .from('people') // Replace with your table name
-          .select('*');
+        const { data, error } = all ? await supabase
+          .from('people')
+          .select('*') 
+        : await supabase
+          .from('people')
+          .select('*')
+          .limit(10)
 
         if (error) {
           throw error;
@@ -155,7 +159,7 @@ export default function PeopleTable({ all }: any) {
           data={filteredData}
         />
       </TableContainer>
+      {!all && <><br/><Button leadingVisual={ArrowRightIcon} onClick={() => navigate("/people")} >Show all</Button></>}
     </Box>
   );
-
 };
