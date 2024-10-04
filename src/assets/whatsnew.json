@@ -1,5 +1,10 @@
 [
     {
+        "description": "Added sidebar menu (beta)",
+        "version": "0.7.0",
+        "thread": 60
+    },
+    {
         "description": "Added new conflict types: improvement and confirmed",
         "version": "0.5.0",
         "thread": 48
