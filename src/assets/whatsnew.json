@@ -1,5 +1,10 @@
 [
     {
+        "description": "Home page shows fewer people",
+        "version": "0.6.1",
+        "thread": 63
+    },
+    {
         "description": "Users are now greeted with their name",
         "version": "0.6.0",
         "thread": 58
