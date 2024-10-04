@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 
 import { StateLabel, Box, PageHeader, RelativeTime, Button, Label, Dialog, Text, TabNav, IconButton, Stack, CounterLabel } from '@primer/react';
 import { NoteIcon, AlertIcon, PeopleIcon, CommentDiscussionIcon, ArrowLeftIcon, CheckCircleIcon } from '@primer/octicons-react';
-import { SkeletonText } from '@primer/react/drafts';
+import { Banner, SkeletonText } from '@primer/react/drafts';
 import PersonDetailInfo from './PersonDetailInfo';
 import { Conflict, User } from '../Interfaces';
 import PersonConflictList from './PersonConflictList';
@@ -159,6 +159,14 @@ export default function PersonDetail({ session }: any) {
     </Box>
   );
 
+  if (!person) return <>
+  <Banner
+    title="Person not found"
+    description={<Text>Either the person you are looking for does not exist or you do not have permissions to read it.</Text>}
+    variant="critical"
+  /><br/>
+  <Button icon={ArrowLeftIcon} onClick={() => navigate(-1)} />
+  </>
   return (
     <Box
       sx={{
