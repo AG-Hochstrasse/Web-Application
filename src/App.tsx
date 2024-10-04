@@ -84,7 +84,7 @@ export function App() {
           <Routes>
             <Route path="/" element={<AppHome session={session}/>} />
             <Route path="/people" element={<PeopleTable all />} />
-            <Route path="/people/:id" element={<PersonDetail />} />
+            <Route path="/people/:id" element={<PersonDetail session={session} />} />
             <Route path="/people/:id/edit" element={<EditPeople session={session} />} />
             <Route path="/people/new" element={<EditPeople session={session} insert />} />
             <Route path="/conflicts/:id" element={<ConflictDetail />} />
