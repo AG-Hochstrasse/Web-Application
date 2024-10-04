@@ -34,9 +34,11 @@ export default function PeopleTable({ all }: any) {
         const { data, error } = all ? await supabase
           .from('people')
           .select('*') 
+          .eq('exhumed', false)
         : await supabase
           .from('people')
           .select('*')
+          .eq('exhumed', false)
           .limit(10)
 
         if (error) {
