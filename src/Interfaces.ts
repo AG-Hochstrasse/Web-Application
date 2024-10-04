@@ -26,6 +26,9 @@ export interface Person {
   marriage_status: string | null;
   children: number | null;
   burial_day: string | null;
+  exhumed: boolean;
+  exhumation_date: string | null;
+  auto_added: boolean;
 }
 
 export interface UnIdentifiedPerson {
@@ -55,6 +58,9 @@ export interface UnIdentifiedPerson {
   marriage_status: string | null;
   children: number | null;
   burial_day: string | null;
+  exhumed: boolean;
+  exhumation_date: string | null;
+  auto_added: boolean;
 }
 
 export interface User {
