@@ -1,5 +1,5 @@
 import { Button, Header, Heading, Text, Avatar, Link, Octicon } from '@primer/react'
-import { ThreeBarsIcon, FileMediaIcon } from '@primer/octicons-react'
+import { ThreeBarsIcon, FileMediaIcon, ArrowUpRightIcon } from '@primer/octicons-react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Link as RouterLink } from 'react-router-dom';
 import ProfileMenu from './ProfileMenu';
@@ -37,11 +37,15 @@ export default function AppHeader(props: any) {
       </Header.Link>
     </Header.Item>
 
-    <Header.Item sx={{ mr: 0, }} >
-      
-      
-      {/* @ts-ignore */}
-      <ProfileMenu session={props.session}/>
+    <Header.Item>
+      <Header.Link href="https://github.com/AG-Hochstrasse/Web-Application">
+        <ArrowUpRightIcon/> GitHub
+      </Header.Link>
     </Header.Item>
-  </Header>
+    
+    <Header.Item sx={{ mr: 0, }} >
+      {/* @ts-ignore */}
+      <ProfileMenu session={props.session} />
+    </Header.Item>
+  </Header >
 }

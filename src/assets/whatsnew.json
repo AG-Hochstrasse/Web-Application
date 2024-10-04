@@ -1,5 +1,10 @@
 [
     {
+        "description": "Added link to GitHub",
+        "version": "0.6.2",
+        "thread": 65
+    },
+    {
         "description": "Home page shows fewer people",
         "version": "0.6.1",
         "thread": 63
