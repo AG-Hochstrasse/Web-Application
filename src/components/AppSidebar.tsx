@@ -1,4 +1,4 @@
-import { HomeIcon, InfoIcon, MarkGithubIcon, NorthStarIcon, PeopleIcon, StarIcon, ThreeBarsIcon, XIcon } from "@primer/octicons-react"
+import { BookIcon, HomeIcon, InfoIcon, LinkExternalIcon, MarkGithubIcon, NorthStarIcon, PeopleIcon, StarIcon, ThreeBarsIcon, XIcon } from "@primer/octicons-react"
 import { ActionList, AnchoredOverlay, Box, Button, Header, IconButton, NavList, Overlay } from "@primer/react"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
@@ -22,7 +22,7 @@ export default function AppSidebar() {
         side="inside-top"
         anchorOffset={-19}
         alignmentOffset={-30}
-        width="small"
+        width="medium"
         
       >
         <Box
@@ -58,9 +58,15 @@ export default function AppSidebar() {
             </NavList.Item>
             <NavList.Item href="https://github.com/AG-Hochstrasse">
               <NavList.LeadingVisual><MarkGithubIcon /></NavList.LeadingVisual> AG Hochstraße on GitHub
-            </NavList.Item>
+              <NavList.TrailingVisual><LinkExternalIcon /></NavList.TrailingVisual>
+              </NavList.Item>
             <NavList.Item href="https://github.com/AG-Hochstrasse/Web-Application">
               <NavList.LeadingVisual><StarIcon /></NavList.LeadingVisual> Star on GitHub
+              <NavList.TrailingVisual><LinkExternalIcon /></NavList.TrailingVisual>
+              </NavList.Item>
+            <NavList.Item href="https://github.com/AG-Hochstrasse/Web-Application/wiki">
+              <NavList.LeadingVisual><BookIcon /></NavList.LeadingVisual> Wiki
+              <NavList.TrailingVisual><LinkExternalIcon /></NavList.TrailingVisual>
             </NavList.Item>
           </NavList>
         </Box>
