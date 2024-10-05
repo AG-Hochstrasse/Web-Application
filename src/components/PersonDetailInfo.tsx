@@ -26,10 +26,14 @@ const PersonDetailInfo = (props: PersonDetailInfoPros) => {
   };
   return (
     <div>
+      <LabelGroup>
+        {props.person.exhumed && <Label variant="attention">Exhumed</Label>}
+        {props.person.auto_added && <Label variant="accent">Auto-added</Label>}
+      </LabelGroup>
       {conflictablePersonFields.map((field: string) => {
         // Dynamically get the value from the person object based on field name
         const fieldValue = props.person[field as keyof Person];
-        if (fieldValue) {
+        if (fieldValue && typeof fieldValue !== "boolean") { // booleans are displayed as labels
           return (
             fieldValue != null && (
               <div key={field}>
