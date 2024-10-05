@@ -375,7 +375,7 @@ export default function EditPeople({ session, insert }: any) {
                 <FormControl.Label>Auto-added</FormControl.Label>
                 {/* @ts-ignore */}
                 <Checkbox value={autoAdded} onChange={ (e) => setAutoAdded(e.target.checked) } />
-                <FormControl.Caption>Whether the person was created by an automation. This shouldn't be activated this way.</FormControl.Label>
+                <FormControl.Caption>Whether the person was created by an automation. This shouldn't be activated this way.</FormControl.Caption>
               </FormControl>
             </Stack>
           </Details>
