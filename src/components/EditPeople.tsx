@@ -361,6 +361,7 @@ export default function EditPeople({ session, insert }: any) {
               <Text>Exhumed</Text> {/* TODO */}
               <FormControl>
                 <FormControl.Label>Exhumation date</FormControl.Label>
+                {/* @ts-ignore */}
                 <TextInput value={exhumationDate} leadingVisual={CalendarIcon} onChange={(e) => { setExhumationDate(e.target.value); }} />
               </FormControl>
             </Stack>
