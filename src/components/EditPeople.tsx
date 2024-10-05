@@ -433,7 +433,7 @@ export default function EditPeople({ session, insert }: any) {
                   burial_day: burialDay,
                   exhumed: exhumed,
                   exhumation_date: exhumationDate,
-                  auto_added: autoAddes
+                  auto_added: autoAdded
                 }, id.id!)
                 a.then((response) => {
                   if (response.error) {
