@@ -231,6 +231,7 @@ export default function EditPeople({ session, insert }: any) {
             {!insert && <>
               <FormControl.Label>ID</FormControl.Label>
               <TextInput monospace disabled value={person!.id} />
+              <FormControl.Caption>The ID cannot be changed.</FormControl.Caption>
             </>}
           </FormControl>
           <FormControl>
@@ -369,12 +370,12 @@ export default function EditPeople({ session, insert }: any) {
               <FormControl>
                 <FormControl.Label>Exhumed</FormControl.Label>
                 {/* @ts-ignore */}
-                <Checkbox value={exhumed} onChange={ (e) => setExhumed(e.target.checked) } />
+                <Checkbox checked={exhumed} onChange={ (e) => setExhumed(e.target.checked) } />
               </FormControl>
               <FormControl>
                 <FormControl.Label>Auto-added</FormControl.Label>
                 {/* @ts-ignore */}
-                <Checkbox value={autoAdded} onChange={ (e) => setAutoAdded(e.target.checked) } />
+                <Checkbox checked={autoAdded} onChange={ (e) => setAutoAdded(e.target.checked) } />
                 <FormControl.Caption>Whether the person was created by an automation. This shouldn't be activated this way.</FormControl.Caption>
               </FormControl>
             </Stack>
