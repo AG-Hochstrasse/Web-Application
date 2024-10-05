@@ -358,12 +358,17 @@ export default function EditPeople({ session, insert }: any) {
                 {/* @ts-ignore */}
                 <TextInput value={burialDay} leadingVisual={CalendarIcon} onChange={(e) => { setBurialDay(e.target.value); }} />
               </FormControl>
-              <Text>Exhumed</Text> {/* TODO */}
+              <FormControl>
+                <FormControl.Label>Exhumed</FormControl.Label>
+                {/* @ts-ignore */}
+                <Checkbox value={exhumed} onChange={ (e: any) => setExhumed(e.target.value) } />
+              </FormControl>
               <FormControl>
                 <FormControl.Label>Exhumation date</FormControl.Label>
                 {/* @ts-ignore */}
                 <TextInput value={exhumationDate} leadingVisual={CalendarIcon} onChange={(e) => { setExhumationDate(e.target.value); }} />
               </FormControl>
+              
             </Stack>
           </Details>
 
@@ -386,7 +391,7 @@ export default function EditPeople({ session, insert }: any) {
                 marriage_status: marriageStatus,
                 children: children,
                 burial_day: burialDay,
-                exhumed: false, //TODO
+                exhumed: exhumed,
                 exhumation_date: exhumationDate,
                 auto_added: false
               })
@@ -418,7 +423,7 @@ export default function EditPeople({ session, insert }: any) {
                   marriage_status: marriageStatus,
                   children: children,
                   burial_day: burialDay,
-                  exhumed: false, //TODO
+                  exhumed: exhumed,
                   exhumation_date: exhumationDate,
                   auto_added: false
                 }, id.id!)
