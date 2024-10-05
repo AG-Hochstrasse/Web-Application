@@ -30,6 +30,7 @@ const PersonDetailInfo = (props: PersonDetailInfoPros) => {
         {props.person.exhumed && <Label variant="attention">Exhumed</Label>}
         {props.person.auto_added && <Label variant="accent">Auto-added</Label>}
       </LabelGroup>
+      <br/>
       {conflictablePersonFields.map((field: string) => {
         // Dynamically get the value from the person object based on field name
         const fieldValue = props.person[field as keyof Person];
