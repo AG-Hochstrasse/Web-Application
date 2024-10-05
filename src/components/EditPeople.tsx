@@ -73,6 +73,7 @@ export default function EditPeople({ session, insert }: any) {
   const [burialDay, setBurialDay] = useState<string | null>(null)
   const [exhumed, setExhumed] = useState(false)
   const [exhumationDate, setExhumationDate] = useState<string | null>(null)
+  const [autoAdded, setAutoAdded] = useState<boolean | null>(null)
 
   const { getDetailsProps } = useDetails({
     closeOnOutsideClick: false,
@@ -144,6 +145,7 @@ export default function EditPeople({ session, insert }: any) {
           setBurialDay(person.burial_day)
           setExhumed(person.exhumed)
           setExhumationDate(person.exhumation_date)
+          setAutoAdded(person.auto_added)
         } catch (error) {
           if (error instanceof Error) {
             setError(error.message);
@@ -359,16 +361,22 @@ export default function EditPeople({ session, insert }: any) {
                 <TextInput value={burialDay} leadingVisual={CalendarIcon} onChange={(e) => { setBurialDay(e.target.value); }} />
               </FormControl>
               <FormControl>
-                <FormControl.Label>Exhumed</FormControl.Label>
-                {/* @ts-ignore */}
-                <Checkbox value={exhumed} onChange={ (e: any) => setExhumed(e.target.value) } />
-              </FormControl>
-              <FormControl>
                 <FormControl.Label>Exhumation date</FormControl.Label>
                 {/* @ts-ignore */}
                 <TextInput value={exhumationDate} leadingVisual={CalendarIcon} onChange={(e) => { setExhumationDate(e.target.value); }} />
               </FormControl>
-              
+
+              <FormControl>
+                <FormControl.Label>Exhumed</FormControl.Label>
+                {/* @ts-ignore */}
+                <Checkbox value={exhumed} onChange={ (e) => setExhumed(e.target.checked) } />
+              </FormControl>
+              <FormControl>
+                <FormControl.Label>Auto-added</FormControl.Label>
+                {/* @ts-ignore */}
+                <Checkbox value={autoAdded} onChange={ (e) => setAutoAdded(e.target.checked) } />
+                <FormControl.Caption>Whether the person was created by an automation. This shouldn't be activated this way.</FormControl.Label>
+              </FormControl>
             </Stack>
           </Details>
 
@@ -393,7 +401,7 @@ export default function EditPeople({ session, insert }: any) {
                 burial_day: burialDay,
                 exhumed: exhumed,
                 exhumation_date: exhumationDate,
-                auto_added: false
+                auto_added: autoAdded
               })
               a.then((response) => {
                 if (response) {
@@ -425,7 +433,7 @@ export default function EditPeople({ session, insert }: any) {
                   burial_day: burialDay,
                   exhumed: exhumed,
                   exhumation_date: exhumationDate,
-                  auto_added: false
+                  auto_added: autoAddes
                 }, id.id!)
                 a.then((response) => {
                   if (response.error) {
