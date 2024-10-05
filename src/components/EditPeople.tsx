@@ -72,7 +72,7 @@ export default function EditPeople({ session, insert }: any) {
   const [children, setChildren] = useState<number | null>(null)
   const [burialDay, setBurialDay] = useState<string | null>(null)
   const [exhumed, setExhumed] = useState(false)
-  const [exhumationDate, setExhumationDate] = useState<string | null>()
+  const [exhumationDate, setExhumationDate] = useState<string | null>(null)
 
   const { getDetailsProps } = useDetails({
     closeOnOutsideClick: false,
