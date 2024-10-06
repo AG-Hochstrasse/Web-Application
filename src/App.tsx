@@ -20,6 +20,7 @@ import { Auth } from '@supabase/auth-ui-react';
 import { supabase } from './services/supabaseClient';
 import WhatsNew from './components/WhatsNew';
 import ConflictDetail from './components/ConflictDetail';
+import Playground from './components/AppPage';
 
 export function App() {
   const [loading, setLoading] = useState(true);
