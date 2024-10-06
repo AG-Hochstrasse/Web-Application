@@ -5,6 +5,11 @@
         "thread": 60
     },
     {
+        "description": "Added new data fields: exhumed, exhumation date and auto-added",
+        "version": "0.6.3",
+        "thread": 61
+    },
+    {
         "description": "Added link to GitHub",
         "version": "0.6.2",
         "thread": 65

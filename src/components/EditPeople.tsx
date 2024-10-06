@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../services/supabaseClient";
 import { Person, UnIdentifiedPerson, User } from "../Interfaces";
-import { PageHeader, Box, IconButton, FormControl, TextInput, Spinner, Stack, Text, Textarea, Button, Details, useDetails } from '@primer/react';
+import { PageHeader, Box, IconButton, FormControl, TextInput, Spinner, Stack, Text, Textarea, Button, Details, useDetails, Checkbox } from '@primer/react';
 import { ArrowLeftIcon, CalendarIcon, ClockIcon, FoldIcon, NumberIcon } from '@primer/octicons-react';
 import { useNavigate, useParams } from "react-router-dom";
 import { Banner } from '@primer/react/experimental'
@@ -71,6 +71,9 @@ export default function EditPeople({ session, insert }: any) {
   const [marriageStatus, setMarriageStatus] = useState<string | null>(null)
   const [children, setChildren] = useState<number | null>(null)
   const [burialDay, setBurialDay] = useState<string | null>(null)
+  const [exhumed, setExhumed] = useState(false)
+  const [exhumationDate, setExhumationDate] = useState<string | null>(null)
+  const [autoAdded, setAutoAdded] = useState<boolean>(false)
 
   const { getDetailsProps } = useDetails({
     closeOnOutsideClick: false,
@@ -140,6 +143,9 @@ export default function EditPeople({ session, insert }: any) {
           setMarriageStatus(person.marriage_status)
           setChildren(person.children)
           setBurialDay(person.burial_day)
+          setExhumed(person.exhumed)
+          setExhumationDate(person.exhumation_date)
+          setAutoAdded(person.auto_added)
         } catch (error) {
           if (error instanceof Error) {
             setError(error.message);
@@ -225,6 +231,7 @@ export default function EditPeople({ session, insert }: any) {
             {!insert && <>
               <FormControl.Label>ID</FormControl.Label>
               <TextInput monospace disabled value={person!.id} />
+              <FormControl.Caption>The ID cannot be changed.</FormControl.Caption>
             </>}
           </FormControl>
           <FormControl>
@@ -354,6 +361,23 @@ export default function EditPeople({ session, insert }: any) {
                 {/* @ts-ignore */}
                 <TextInput value={burialDay} leadingVisual={CalendarIcon} onChange={(e) => { setBurialDay(e.target.value); }} />
               </FormControl>
+              <FormControl>
+                <FormControl.Label>Exhumation date</FormControl.Label>
+                {/* @ts-ignore */}
+                <TextInput value={exhumationDate} leadingVisual={CalendarIcon} onChange={(e) => { setExhumationDate(e.target.value); }} />
+              </FormControl>
+
+              <FormControl>
+                <FormControl.Label>Exhumed</FormControl.Label>
+                {/* @ts-ignore */}
+                <Checkbox checked={exhumed} onChange={ (e) => setExhumed(e.target.checked) } />
+              </FormControl>
+              <FormControl>
+                <FormControl.Label>Auto-added</FormControl.Label>
+                {/* @ts-ignore */}
+                <Checkbox checked={autoAdded} onChange={ (e) => setAutoAdded(e.target.checked) } />
+                <FormControl.Caption>Whether the person was created by an automation. This shouldn't be activated this way.</FormControl.Caption>
+              </FormControl>
             </Stack>
           </Details>
 
@@ -375,7 +399,10 @@ export default function EditPeople({ session, insert }: any) {
                 death_time: deathTime,
                 marriage_status: marriageStatus,
                 children: children,
-                burial_day: burialDay
+                burial_day: burialDay,
+                exhumed: exhumed,
+                exhumation_date: exhumationDate,
+                auto_added: autoAdded
               })
               a.then((response) => {
                 if (response) {
@@ -404,7 +431,10 @@ export default function EditPeople({ session, insert }: any) {
                   death_time: deathTime,
                   marriage_status: marriageStatus,
                   children: children,
-                  burial_day: burialDay
+                  burial_day: burialDay,
+                  exhumed: exhumed,
+                  exhumation_date: exhumationDate,
+                  auto_added: autoAdded
                 }, id.id!)
                 a.then((response) => {
                   if (response.error) {
