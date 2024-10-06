@@ -81,6 +81,13 @@ export interface Conflict {
   open: boolean;
 }
 
+export interface UnidentifiedConflict {
+  person: number;
+  field: string; //TODO: create enum type
+  comment: string | null;
+  type: "conflict" | "not_confirmed" | "improvement" | "confirmed";
+  open: boolean;
+}
 export const conflictablePersonFields = [
   "name",
   "first_name",
