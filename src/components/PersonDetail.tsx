@@ -5,10 +5,20 @@ import { useState, useEffect, useRef } from 'react';
 
 import { StateLabel, Box, PageHeader, RelativeTime, Button, Label, Dialog, Text, TabNav, IconButton, Stack, CounterLabel } from '@primer/react';
 import { NoteIcon, AlertIcon, PeopleIcon, CommentDiscussionIcon, ArrowLeftIcon, CheckCircleIcon } from '@primer/octicons-react';
-import { SkeletonText } from '@primer/react/drafts';
+import { SkeletonText, Banner } from '@primer/react/drafts';
 import PersonDetailInfo from './PersonDetailInfo';
 import { Conflict } from '../Interfaces';
 import PersonConflictList from './PersonConflictList';
+import { PostgrestError } from '@supabase/supabase-js'
+
+async function updatePersonState(to: string, id: number) {
+  const { data, error } = await supabase
+    .from('people')
+    .update({state: to})
+    .eq('id', id)
+
+  return { data, error }
+}
 
 const PersonDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -17,6 +27,7 @@ const PersonDetail: React.FC = () => {
   const [conflicts, setConflicts] = useState<Conflict[]>([])
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [databaseError, setDatabaseError] = useState<PostgrestError | null>(null)
 
   const [isOpen, setIsOpen] = useState(false)
   const returnFocusRef = useRef(null)
@@ -144,7 +155,7 @@ const PersonDetail: React.FC = () => {
         </PageHeader.TitleArea>
         <PageHeader.Description>
           {/* @ts-ignore */}
-          <StateLabel status="issueOpened">Open</StateLabel>
+          <StateLabel status={person.state == "open" ? "issueOpened" : person.state == "closed" ? "issueClosed" : person.state == "canceled" ? "issueClosedNotPlanned" : "unavailable"}>{person.state[0].toUpperCase()+person.state.slice(1)}</StateLabel>
           <Label variant={person.hidden ? "secondary" : "success"}>{person.hidden ? "Hidden" : "Published"}</Label>
           {/* @ts-ignore */}
           Created <RelativeTime dateTime="2024-09-07T17:32:24.118969+00:00" />
@@ -176,6 +187,7 @@ const PersonDetail: React.FC = () => {
               <CheckCircleIcon size={16} /> <Text ml={1}>Confirmed data</Text>
             </TabNav.Link>
           </TabNav>
+          {databaseError && <Banner title="Error" description={<Text>{databaseError.message}</Text>} variant="critical"/>}
 
           {/* Content for each tab */}
           <Box mt={3}>
@@ -191,7 +203,7 @@ const PersonDetail: React.FC = () => {
       <Dialog returnFocusRef={returnFocusRef} isOpen={isOpen} onDismiss={() => setIsOpen(false)} aria-labelledby="header" >
         <div data-testid="inner">
           {/* @ts-ignore */}
-          <Dialog.Header id="header">Title</Dialog.Header>
+          <Dialog.Header id="header">{person.state == "open" ? "Close" : "Reopen"} person</Dialog.Header>
           <Box p={3}>
             <Text>
               Publishing a person makes it visible in generated documents using this database and for all visitors of this website (future).
@@ -200,7 +212,14 @@ const PersonDetail: React.FC = () => {
             </Text>
           </Box>
           <Box p={3} borderTop="1px solid" borderColor="border.default" display="flex" justifyContent="flex-end">
-            {<Button variant="primary">Close</Button>}
+            {<Button variant="primary" onClick={
+              () => {
+                const a = updatePersonState(person.state == "open" ? "closed" : "open", person.id)
+                a.then((response) => {
+                  if (response.error) setDatabaseError(response.error)
+                })
+                setError(error)
+              }}>{person.state == "open" ? "Close" : "Reopen"} person</Button>}
           </Box>
         </div>
       </Dialog>
