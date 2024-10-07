@@ -3,8 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
 import { useState, useEffect, useRef } from 'react';
 
-import { StateLabel, Box, PageHeader, RelativeTime, Button, Label, Dialog, Text, TabNav, IconButton, Stack, CounterLabel, ButtonGroup } from '@primer/react';
-import { NoteIcon, AlertIcon, PeopleIcon, CommentDiscussionIcon, ArrowLeftIcon, CheckCircleIcon } from '@primer/octicons-react';
+import { StateLabel, Box, PageHeader, RelativeTime, Button, Label, Dialog, Text, TabNav, IconButton, Stack, CounterLabel, ButtonGroup, ActionMenu } from '@primer/react';
+import { NoteIcon, AlertIcon, PeopleIcon, CommentDiscussionIcon, ArrowLeftIcon, CheckCircleIcon, IssueClosedIcon, IssueTrackedByIcon, IssueReopenedIcon } from '@primer/octicons-react';
 import { SkeletonText, Banner } from '@primer/react/drafts';
 import PersonDetailInfo from './PersonDetailInfo';
 import { Conflict } from '../Interfaces';
@@ -18,6 +18,15 @@ async function updatePersonState(to: string, id: number) {
     .eq('id', id)
 
   return { data, error }
+}
+
+async function updatePersonHidden(to: boolean, id: number) {
+  const { data, error } = await supabase
+    .from('people')
+    .update({hidden: to})
+    .eq('id', id)
+
+    return { data, error }
 }
 
 const PersonDetail: React.FC = () => {
@@ -215,7 +224,9 @@ const PersonDetail: React.FC = () => {
           </Box>
           <Box p={3} borderTop="1px solid" borderColor="border.default" display="flex" justifyContent="flex-end">
             <ButtonGroup>
-            {<Button variant="primary" onClick={
+              <Drop
+            </ButtonGroup>
+            {<Button block variant="primary" onClick={
               () => {
                 const a = updatePersonState(person.state == "open" ? "closed" : "open", person.id)
                 a.then((response) => {
@@ -224,7 +235,8 @@ const PersonDetail: React.FC = () => {
                 setError(error)
                 setIsOpen(false)
                 setRetrigger(!retrigger)
-              }}>{person.state == "open" ? "Close" : "Reopen"} person</Button>}
+              }} leadingVisual={person.state == "open" ? IssueClosedIcon : IssueReopenedIcon}>{person.state == "open" ? "Close" : "Reopen"} person</Button>}
+              <br/>
               {person.state != "canceled" && 
               <Button onClick={
                 () => {
@@ -237,9 +249,20 @@ const PersonDetail: React.FC = () => {
                 setRetrigger(!retrigger)
                 }
               }>Close as not planned</Button>}
+              <Button onClick={
+                () => {
+                  const a = updatePersonHidden(!person.hidden, person.id)
+                  a.then((response) => {
+                    if (response.error) setDatabaseError(response.error)
+                  })
+                setError(error)
+                setIsOpen(false)
+                setRetrigger(!retrigger)
+                }
+              }>Publish person</Button>
                 
               
-              </ButtonGroup>
+              
           </Box>
         </div>
       </Dialog>
