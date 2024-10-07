@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
 import { useState, useEffect, useRef } from 'react';
 
-import { StateLabel, Box, PageHeader, RelativeTime, Button, Label, Dialog, Text, TabNav, IconButton, Stack, CounterLabel } from '@primer/react';
+import { StateLabel, Box, PageHeader, RelativeTime, Button, Label, Dialog, Text, TabNav, IconButton, Stack, CounterLabel, ButtonGroup } from '@primer/react';
 import { NoteIcon, AlertIcon, PeopleIcon, CommentDiscussionIcon, ArrowLeftIcon, CheckCircleIcon } from '@primer/octicons-react';
 import { SkeletonText, Banner } from '@primer/react/drafts';
 import PersonDetailInfo from './PersonDetailInfo';
@@ -34,6 +34,8 @@ const PersonDetail: React.FC = () => {
 
   const [selectedTab, setSelectedTab] = useState('details');
 
+  const [retrigger, setRetrigger] = useState(false)
+
   const navigate = useNavigate();
 
   // fetch person
@@ -62,7 +64,7 @@ const PersonDetail: React.FC = () => {
     };
 
     fetchData();
-  }, []);
+  }, [retrigger]);
 
   // fetch conflicts
   useEffect(() => {
@@ -155,7 +157,7 @@ const PersonDetail: React.FC = () => {
         </PageHeader.TitleArea>
         <PageHeader.Description>
           {/* @ts-ignore */}
-          <StateLabel status={person.state == "open" ? "issueOpened" : person.state == "closed" ? "issueClosed" : person.state == "canceled" ? "issueClosedNotPlanned" : "unavailable"}>{person.state[0].toUpperCase()+person.state.slice(1)}</StateLabel>
+          <StateLabel status={person.state == "open" ? "issueOpened" : person.state == "closed" ? "issueClosed" : person.state == "canceled" ? "issueClosedNotPlanned" : "unavailable"}>{person.state == "open" ? "Open" : person.state == "closed" || person.state == "canceled" ? "Closed" : "Unavailable"}</StateLabel>
           <Label variant={person.hidden ? "secondary" : "success"}>{person.hidden ? "Hidden" : "Published"}</Label>
           {/* @ts-ignore */}
           Created <RelativeTime dateTime="2024-09-07T17:32:24.118969+00:00" />
@@ -166,7 +168,7 @@ const PersonDetail: React.FC = () => {
             data-testid="trigger-button"
             ref={returnFocusRef}
             onClick={() => setIsOpen(true)}
-          >Complete</Button>
+          >{person.state == "open" ? "Close" : "Reopen"} or {person.hidden ? "publish" : "unpublish"}</Button>
         </PageHeader.Actions>
         <PageHeader.Navigation>
           {/* @ts-ignore */}
@@ -203,7 +205,7 @@ const PersonDetail: React.FC = () => {
       <Dialog returnFocusRef={returnFocusRef} isOpen={isOpen} onDismiss={() => setIsOpen(false)} aria-labelledby="header" >
         <div data-testid="inner">
           {/* @ts-ignore */}
-          <Dialog.Header id="header">{person.state == "open" ? "Close" : "Reopen"} person</Dialog.Header>
+          <Dialog.Header id="header">{person.state == "open" ? "Close" : "Reopen"} or {person.hidden ? "publish" : "unpublish"} person</Dialog.Header>
           <Box p={3}>
             <Text>
               Publishing a person makes it visible in generated documents using this database and for all visitors of this website (future).
@@ -212,6 +214,7 @@ const PersonDetail: React.FC = () => {
             </Text>
           </Box>
           <Box p={3} borderTop="1px solid" borderColor="border.default" display="flex" justifyContent="flex-end">
+            <ButtonGroup>
             {<Button variant="primary" onClick={
               () => {
                 const a = updatePersonState(person.state == "open" ? "closed" : "open", person.id)
@@ -219,7 +222,24 @@ const PersonDetail: React.FC = () => {
                   if (response.error) setDatabaseError(response.error)
                 })
                 setError(error)
+                setIsOpen(false)
+                setRetrigger(!retrigger)
               }}>{person.state == "open" ? "Close" : "Reopen"} person</Button>}
+              {person.state != "canceled" && 
+              <Button onClick={
+                () => {
+                  const a = updatePersonState("canceled", person.id)
+                  a.then((response) => {
+                    if (response.error) setDatabaseError(response.error)
+                  })
+                setError(error)
+                setIsOpen(false)
+                setRetrigger(!retrigger)
+                }
+              }>Close as not planned</Button>}
+                
+              
+              </ButtonGroup>
           </Box>
         </div>
       </Dialog>
