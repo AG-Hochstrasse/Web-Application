@@ -223,9 +223,6 @@ const PersonDetail: React.FC = () => {
             </Text>
           </Box>
           <Box p={3} borderTop="1px solid" borderColor="border.default" display="flex" justifyContent="flex-end">
-            <ButtonGroup>
-              <Drop
-            </ButtonGroup>
             {<Button block variant="primary" onClick={
               () => {
                 const a = updatePersonState(person.state == "open" ? "closed" : "open", person.id)
@@ -236,7 +233,7 @@ const PersonDetail: React.FC = () => {
                 setIsOpen(false)
                 setRetrigger(!retrigger)
               }} leadingVisual={person.state == "open" ? IssueClosedIcon : IssueReopenedIcon}>{person.state == "open" ? "Close" : "Reopen"} person</Button>}
-              <br/>
+              
               {person.state != "canceled" && 
               <Button onClick={
                 () => {
@@ -259,7 +256,7 @@ const PersonDetail: React.FC = () => {
                 setIsOpen(false)
                 setRetrigger(!retrigger)
                 }
-              }>Publish person</Button>
+              }>{person.hidden ? "Publish" : "Unpublish"} person</Button>
                 
               
               
