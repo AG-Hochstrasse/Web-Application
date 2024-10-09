@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
 import { useState, useEffect, useRef } from 'react';
 
-import { StateLabel, Box, PageHeader, RelativeTime, Button, Label, Dialog, Text, TabNav, IconButton, Stack, CounterLabel, ButtonGroup, ActionMenu } from '@primer/react';
+import { StateLabel, Box, PageHeader, RelativeTime, Button, Label, Dialog, Text, TabNav, IconButton, Stack, CounterLabel, ButtonGroup, ActionMenu, ActionList } from '@primer/react';
 import { NoteIcon, AlertIcon, PeopleIcon, CommentDiscussionIcon, ArrowLeftIcon, CheckCircleIcon, IssueClosedIcon, IssueTrackedByIcon, IssueReopenedIcon } from '@primer/octicons-react';
 import { SkeletonText, Banner } from '@primer/react/drafts';
 import PersonDetailInfo from './PersonDetailInfo';
@@ -222,8 +222,8 @@ const PersonDetail: React.FC = () => {
               Closing a person marks it as done and complete. Only close a person when it's completeley done and all fields are confirmed.
             </Text>
           </Box>
-          <Box p={3} borderTop="1px solid" borderColor="border.default" display="flex" justifyContent="flex-end">
-            {<Button block variant="primary" onClick={
+          <Box p={3} borderTop="1px solid" borderColor="border.default">
+            {<Button sx={{mb: 2}} block variant="primary" onClick={
               () => {
                 const a = updatePersonState(person.state == "open" ? "closed" : "open", person.id)
                 a.then((response) => {
@@ -232,10 +232,9 @@ const PersonDetail: React.FC = () => {
                 setError(error)
                 setIsOpen(false)
                 setRetrigger(!retrigger)
-              }} leadingVisual={person.state == "open" ? IssueClosedIcon : IssueReopenedIcon}>{person.state == "open" ? "Close" : "Reopen"} person</Button>}
-              
+              }}>{person.state == "open" ? "Close" : "Reopen"} person</Button>}
               {person.state != "canceled" && 
-              <Button onClick={
+              <Button sx={{mb: 2}} block onClick={
                 () => {
                   const a = updatePersonState("canceled", person.id)
                   a.then((response) => {
@@ -246,7 +245,7 @@ const PersonDetail: React.FC = () => {
                 setRetrigger(!retrigger)
                 }
               }>Close as not planned</Button>}
-              <Button onClick={
+              <Button block onClick={
                 () => {
                   const a = updatePersonHidden(!person.hidden, person.id)
                   a.then((response) => {
@@ -257,7 +256,6 @@ const PersonDetail: React.FC = () => {
                 setRetrigger(!retrigger)
                 }
               }>{person.hidden ? "Publish" : "Unpublish"} person</Button>
-                
               
               
           </Box>
