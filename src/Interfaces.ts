@@ -26,6 +26,9 @@ export interface Person {
   marriage_status: string | null;
   children: number | null;
   burial_day: string | null;
+  exhumed: boolean;
+  exhumation_date: string | null;
+  auto_added: boolean;
 }
 
 export interface UnIdentifiedPerson {
@@ -55,12 +58,22 @@ export interface UnIdentifiedPerson {
   marriage_status: string | null;
   children: number | null;
   burial_day: string | null;
+  exhumed: boolean;
+  exhumation_date: string | null;
+  auto_added: boolean;
 }
 
-export interface User { // maybe stale
+export interface User {
   id: string
   created_at: Date
   username: string | null
+  user: string // assigned supabase auth user
+  read_write: number
+  create_news: boolean
+  maintainer: boolean
+  admin: boolean
+  developer: boolean
+  conflict_read_write: number
 }
 
 

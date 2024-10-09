@@ -7,7 +7,7 @@ import { StateLabel, Box, PageHeader, RelativeTime, Button, Label, Dialog, Text,
 import { NoteIcon, AlertIcon, PeopleIcon, CommentDiscussionIcon, ArrowLeftIcon, CheckCircleIcon, IssueClosedIcon, IssueTrackedByIcon, IssueReopenedIcon } from '@primer/octicons-react';
 import { SkeletonText, Banner } from '@primer/react/drafts';
 import PersonDetailInfo from './PersonDetailInfo';
-import { Conflict } from '../Interfaces';
+import { Conflict, User } from '../Interfaces';
 import PersonConflictList from './PersonConflictList';
 import { PostgrestError } from '@supabase/supabase-js'
 
@@ -29,7 +29,7 @@ async function updatePersonHidden(to: boolean, id: number) {
     return { data, error }
 }
 
-const PersonDetail: React.FC = () => {
+export default function PersonDetail({ session }: any) {
   const { id } = useParams<{ id: string }>();
 
   const [person, setPerson] = useState<any>([]);
@@ -37,6 +37,7 @@ const PersonDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [databaseError, setDatabaseError] = useState<PostgrestError | null>(null)
+  const [user, setUser] = useState<User | null>(null)
 
   const [isOpen, setIsOpen] = useState(false)
   const returnFocusRef = useRef(null)
@@ -46,6 +47,34 @@ const PersonDetail: React.FC = () => {
   const [retrigger, setRetrigger] = useState(false)
 
   const navigate = useNavigate();
+
+  //fetch user
+  useEffect(() => {
+    let ignore = false
+    async function getProfile() {
+      setLoading(true)
+      
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user', session.user.id)
+        .single()
+
+      if (!ignore) {
+        if (error) {
+          console.log(error)
+        } else if (data) {
+          setUser(data)
+        }
+      }
+      setLoading(false)
+    }
+    getProfile()
+
+    return () => {
+      ignore = true
+    }
+  }, [session])
 
   // fetch person
   useEffect(() => {
@@ -152,6 +181,14 @@ const PersonDetail: React.FC = () => {
     </Box>
   );
 
+  if (!person) return <>
+  <Banner
+    title="Person not found"
+    description={<Text>Either the person you are looking for does not exist or you do not have permissions to read it.</Text>}
+    variant="critical"
+  /><br/>
+  <Button icon={ArrowLeftIcon} onClick={() => navigate(-1)} />
+  </>
   return (
     <Box
       sx={{
@@ -172,7 +209,7 @@ const PersonDetail: React.FC = () => {
           Created <RelativeTime dateTime="2024-09-07T17:32:24.118969+00:00" />
         </PageHeader.Description>
         <PageHeader.Actions>
-          <Button onClick={() => {navigate(`/people/${id}/edit`)}}>Edit</Button>
+          { ((user?.read_write ?? 0) >= (person.hidden ? 3 : 4)) && <Button onClick={() => {navigate(`/people/${id}/edit`)}}>Edit</Button> }
           <Button variant="primary"
             data-testid="trigger-button"
             ref={returnFocusRef}
@@ -264,5 +301,3 @@ const PersonDetail: React.FC = () => {
     </Box>
   );
 };
-
-export default PersonDetail;
