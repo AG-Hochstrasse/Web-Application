@@ -21,6 +21,7 @@ import { supabase } from './services/supabaseClient';
 import WhatsNew from './components/WhatsNew';
 import ConflictDetail from './components/ConflictDetail';
 import CreateConflict from './components/CreateConflict';
+import Playground from './components/AppPage';
 
 export function App() {
   const [loading, setLoading] = useState(true);
@@ -85,7 +86,7 @@ export function App() {
           <Routes>
             <Route path="/" element={<AppHome session={session}/>} />
             <Route path="/people" element={<PeopleTable all />} />
-            <Route path="/people/:id" element={<PersonDetail />} />
+            <Route path="/people/:id" element={<PersonDetail session={session} />} />
             <Route path="/people/:id/edit" element={<EditPeople session={session} />} />
             <Route path="/people/new" element={<EditPeople session={session} insert />} />
             <Route path="/people/:id/conflicts/new" element={<CreateConflict />} />

@@ -3,27 +3,78 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
 import { useState, useEffect, useRef } from 'react';
 
-import { StateLabel, Box, PageHeader, RelativeTime, Button, Label, Dialog, Text, TabNav, IconButton, Stack, CounterLabel } from '@primer/react';
-import { NoteIcon, AlertIcon, PeopleIcon, CommentDiscussionIcon, ArrowLeftIcon, CheckCircleIcon } from '@primer/octicons-react';
-import { SkeletonText } from '@primer/react/drafts';
+import { StateLabel, Box, PageHeader, RelativeTime, Button, Label, Dialog, Text, TabNav, IconButton, Stack, CounterLabel, ButtonGroup, ActionMenu, ActionList } from '@primer/react';
+import { NoteIcon, AlertIcon, PeopleIcon, CommentDiscussionIcon, ArrowLeftIcon, CheckCircleIcon, IssueClosedIcon, IssueTrackedByIcon, IssueReopenedIcon } from '@primer/octicons-react';
+import { SkeletonText, Banner } from '@primer/react/drafts';
 import PersonDetailInfo from './PersonDetailInfo';
-import { Conflict } from '../Interfaces';
+import { Conflict, User } from '../Interfaces';
 import PersonConflictList from './PersonConflictList';
+import { PostgrestError } from '@supabase/supabase-js'
 
-const PersonDetail: React.FC = () => {
+async function updatePersonState(to: string, id: number) {
+  const { data, error } = await supabase
+    .from('people')
+    .update({state: to})
+    .eq('id', id)
+
+  return { data, error }
+}
+
+async function updatePersonHidden(to: boolean, id: number) {
+  const { data, error } = await supabase
+    .from('people')
+    .update({hidden: to})
+    .eq('id', id)
+
+    return { data, error }
+}
+
+export default function PersonDetail({ session }: any) {
   const { id } = useParams<{ id: string }>();
 
   const [person, setPerson] = useState<any>([]);
   const [conflicts, setConflicts] = useState<Conflict[]>([])
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [databaseError, setDatabaseError] = useState<PostgrestError | null>(null)
+  const [user, setUser] = useState<User | null>(null)
 
   const [isOpen, setIsOpen] = useState(false)
   const returnFocusRef = useRef(null)
 
   const [selectedTab, setSelectedTab] = useState('details');
 
+  const [retrigger, setRetrigger] = useState(false)
+
   const navigate = useNavigate();
+
+  //fetch user
+  useEffect(() => {
+    let ignore = false
+    async function getProfile() {
+      setLoading(true)
+      
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user', session.user.id)
+        .single()
+
+      if (!ignore) {
+        if (error) {
+          console.log(error)
+        } else if (data) {
+          setUser(data)
+        }
+      }
+      setLoading(false)
+    }
+    getProfile()
+
+    return () => {
+      ignore = true
+    }
+  }, [session])
 
   // fetch person
   useEffect(() => {
@@ -51,7 +102,7 @@ const PersonDetail: React.FC = () => {
     };
 
     fetchData();
-  }, []);
+  }, [retrigger]);
 
   // fetch conflicts
   useEffect(() => {
@@ -130,6 +181,14 @@ const PersonDetail: React.FC = () => {
     </Box>
   );
 
+  if (!person) return <>
+  <Banner
+    title="Person not found"
+    description={<Text>Either the person you are looking for does not exist or you do not have permissions to read it.</Text>}
+    variant="critical"
+  /><br/>
+  <Button icon={ArrowLeftIcon} onClick={() => navigate(-1)} />
+  </>
   return (
     <Box
       sx={{
@@ -144,18 +203,18 @@ const PersonDetail: React.FC = () => {
         </PageHeader.TitleArea>
         <PageHeader.Description>
           {/* @ts-ignore */}
-          <StateLabel status="issueOpened">Open</StateLabel>
+          <StateLabel status={person.state == "open" ? "issueOpened" : person.state == "closed" ? "issueClosed" : person.state == "canceled" ? "issueClosedNotPlanned" : "unavailable"}>{person.state == "open" ? "Open" : person.state == "closed" || person.state == "canceled" ? "Closed" : "Unavailable"}</StateLabel>
           <Label variant={person.hidden ? "secondary" : "success"}>{person.hidden ? "Hidden" : "Published"}</Label>
           {/* @ts-ignore */}
           Created <RelativeTime dateTime={person.created_at} />
         </PageHeader.Description>
         <PageHeader.Actions>
-          <Button onClick={() => {navigate(`/people/${id}/edit`)}}>Edit</Button>
+          { ((user?.read_write ?? 0) >= (person.hidden ? 3 : 4)) && <Button onClick={() => {navigate(`/people/${id}/edit`)}}>Edit</Button> }
           <Button variant="primary"
             data-testid="trigger-button"
             ref={returnFocusRef}
             onClick={() => setIsOpen(true)}
-          >Complete</Button>
+          >{person.state == "open" ? "Close" : "Reopen"} or {person.hidden ? "publish" : "unpublish"}</Button>
         </PageHeader.Actions>
         <PageHeader.Navigation>
           {/* @ts-ignore */}
@@ -176,6 +235,7 @@ const PersonDetail: React.FC = () => {
               <CheckCircleIcon size={16} /> <Text ml={1}>Confirmed data</Text>
             </TabNav.Link>
           </TabNav>
+          {databaseError && <Banner title="Error" description={<Text>{databaseError.message}</Text>} variant="critical"/>}
 
           {/* Content for each tab */}
           <Box mt={3}>
@@ -191,17 +251,53 @@ const PersonDetail: React.FC = () => {
       <Dialog returnFocusRef={returnFocusRef} isOpen={isOpen} onDismiss={() => setIsOpen(false)} aria-labelledby="header" >
         <div data-testid="inner">
           {/* @ts-ignore */}
-          <Dialog.Header id="header">Title</Dialog.Header>
+          <Dialog.Header id="header">{person.state == "open" ? "Close" : "Reopen"} or {person.hidden ? "publish" : "unpublish"} person</Dialog.Header>
           <Box p={3}>
-            <Text>Some content</Text>
+            <Text>
+              Publishing a person makes it visible in generated documents using this database and for all visitors of this website (future).
+              <br /><br />
+              Closing a person marks it as done and complete. Only close a person when it's completeley done and all fields are confirmed.
+            </Text>
           </Box>
-          <Box p={3} borderTop="1px solid" borderColor="border.default" display="flex" justifyContent="flex-end">
-            <Button variant="primary">Close</Button>
+          <Box p={3} borderTop="1px solid" borderColor="border.default">
+            {<Button sx={{mb: 2}} block variant="primary" onClick={
+              () => {
+                const a = updatePersonState(person.state == "open" ? "closed" : "open", person.id)
+                a.then((response) => {
+                  if (response.error) setDatabaseError(response.error)
+                })
+                setError(error)
+                setIsOpen(false)
+                setRetrigger(!retrigger)
+              }}>{person.state == "open" ? "Close" : "Reopen"} person</Button>}
+              {person.state != "canceled" && 
+              <Button sx={{mb: 2}} block onClick={
+                () => {
+                  const a = updatePersonState("canceled", person.id)
+                  a.then((response) => {
+                    if (response.error) setDatabaseError(response.error)
+                  })
+                setError(error)
+                setIsOpen(false)
+                setRetrigger(!retrigger)
+                }
+              }>Close as not planned</Button>}
+              <Button block onClick={
+                () => {
+                  const a = updatePersonHidden(!person.hidden, person.id)
+                  a.then((response) => {
+                    if (response.error) setDatabaseError(response.error)
+                  })
+                setError(error)
+                setIsOpen(false)
+                setRetrigger(!retrigger)
+                }
+              }>{person.hidden ? "Publish" : "Unpublish"} person</Button>
+              
+              
           </Box>
         </div>
       </Dialog>
     </Box>
   );
 };
-
-export default PersonDetail;
