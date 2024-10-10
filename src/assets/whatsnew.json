@@ -1,5 +1,14 @@
 [
     {
+        "description": "You can now create conflicts",
+        "version": "0.8.1",
+        "thread": "51"
+    },
+    {
+        "description": "Improved conflict detail view",
+        "version": "0.8.1"
+    },
+    {
         "description": "People can now be closed or published/hidden",
         "version": "0.8.0",
         "thread": 37

@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
 import { useState, useEffect, useRef } from 'react';
-import { Person, Conflict, conflictablePersonFields, ConflictType } from '../Interfaces';
+import { Person, Conflict, displayedPersonFields, ConflictType } from '../Interfaces';
 import { Box, Heading, RelativeTime, Button, Label, Dialog, Text, TabNav, IconButton, LabelGroup } from '@primer/react';
 
 interface PersonDetailInfoPros {
@@ -31,7 +31,7 @@ const PersonDetailInfo = (props: PersonDetailInfoPros) => {
         {props.person.auto_added && <Label variant="accent">Auto-added</Label>}
       </LabelGroup>
       <br/>
-      {conflictablePersonFields.map((field: string) => {
+      {displayedPersonFields.map((field: string) => {
         // Dynamically get the value from the person object based on field name
         const fieldValue = props.person[field as keyof Person];
         if (fieldValue && typeof fieldValue !== "boolean") { // booleans are displayed as labels
