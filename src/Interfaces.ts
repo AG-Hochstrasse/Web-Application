@@ -111,5 +111,7 @@ export const conflictablePersonFields = [
   "marriage_status",
   "children",
   "burial_day",
+  "exhumed",
+  "exhumation_date",
   "comments"
 ]

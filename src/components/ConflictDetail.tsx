@@ -1,6 +1,6 @@
 import { ArrowLeftIcon } from "@primer/octicons-react";
 import { Conflict } from "../Interfaces";
-import { Button, IconButton, PageHeader, Stack, Text, Spinner, StateLabel, RelativeTime, Box } from "@primer/react";
+import { Button, IconButton, PageHeader, Stack, Text, Spinner, StateLabel, RelativeTime, Box, Timeline, Avatar, Label } from "@primer/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "../services/supabaseClient";
 import { useEffect } from "react";
@@ -47,7 +47,7 @@ export default function ConflictDetail() {
               throw error;
             }
 
-            setName(`${data.first_name} ${data.name}`);
+            setName(`${data.first_name ?? "?"} ${data.name}`);
             setPersonId(data.id)
           }
         } catch (error) {
@@ -91,8 +91,14 @@ export default function ConflictDetail() {
       <PageHeader.Description>
         {/* @ts-ignore */}
         <StateLabel status="issueOpened">Open</StateLabel>
+        <>
+                {conflict.type == "conflict" && <Label variant='severe'>Conflict</Label>}
+                {conflict.type == "not_confirmed" && <Label variant='attention'>Not confirmed</Label>}
+                {conflict.type == "improvement" && <Label variant='accent'>Improvement</Label>}
+                {conflict.type == "confirmed" && <Label variant='success'>Confirmed</Label>}
+              </>
         {/* @ts-ignore */}
-        Created <RelativeTime dateTime="2024-09-07T17:32:24.118969+00:00" />
+        Opened <RelativeTime dateTime={conflict.created_at} /> by Octocat
       </PageHeader.Description>
       <PageHeader.Actions>
         <Button onClick={() => { }}>Edit</Button>
@@ -100,6 +106,24 @@ export default function ConflictDetail() {
       </PageHeader.Actions>
     </PageHeader>
 
-    <Box mt={3}>{conflict.comment}</Box>
+
+    <Timeline>
+      {/* Comment 1 */}
+      <Timeline.Item>
+        <Timeline.Badge>
+          <Avatar src="https://github.com/octocat.png" size={40} alt="Octocat" />
+        </Timeline.Badge>
+        <Timeline.Body>
+          <Box>
+            <Text fontWeight="bold">Octocat</Text>
+            {/* @ts-ignore */}
+            <Text fontSize={1} color="fg.muted"> commented <RelativeTime dateTime={conflict.created_at}/> </Text>
+          </Box>
+          <Box mt={2} sx={{color: 'fg.default'}}>
+            <Text>{conflict.comment}</Text>
+          </Box>
+        </Timeline.Body>
+      </Timeline.Item>
+    </Timeline>
   </>
 }

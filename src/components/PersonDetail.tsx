@@ -147,7 +147,7 @@ const PersonDetail: React.FC = () => {
           <StateLabel status="issueOpened">Open</StateLabel>
           <Label variant={person.hidden ? "secondary" : "success"}>{person.hidden ? "Hidden" : "Published"}</Label>
           {/* @ts-ignore */}
-          Created <RelativeTime dateTime="2024-09-07T17:32:24.118969+00:00" />
+          Created <RelativeTime dateTime={person.created_at} />
         </PageHeader.Description>
         <PageHeader.Actions>
           <Button onClick={() => {navigate(`/people/${id}/edit`)}}>Edit</Button>
@@ -170,7 +170,7 @@ const PersonDetail: React.FC = () => {
               <PeopleIcon size={16} /> <Text ml={1}>Photos</Text>
             </TabNav.Link>
             <TabNav.Link selected={selectedTab === 'conflicts'} onClick={() => setSelectedTab('conflicts')}>
-              <AlertIcon /> <Text ml={1}>Conflicts {conflicts.length > 0 && <CounterLabel>{conflicts.filter((conflict) => conflict.open).length /* don't need to filter by type because 'confirmed's are always closed */}</CounterLabel>}</Text>
+              <AlertIcon /> <Text ml={1}>Conflicts {conflicts.length > 0 && <CounterLabel>{conflicts.filter((conflict) => conflict.open && conflict.type != "confirmed").length /* don't need to filter by type because 'confirmed's are always closed */}</CounterLabel>}</Text>
             </TabNav.Link>
             <TabNav.Link selected={selectedTab === 'confirmed'} onClick={() => setSelectedTab('confirmed')}>
               <CheckCircleIcon size={16} /> <Text ml={1}>Confirmed data</Text>
@@ -182,8 +182,8 @@ const PersonDetail: React.FC = () => {
             {selectedTab === 'details' && <PersonDetailInfo person={person} conflicts={conflicts} />}
             {selectedTab === 'discussion' && <Text>Coming soon...</Text>}
             {selectedTab === 'photos' && <Text>Coming soon...</Text>}
-            {selectedTab === 'conflicts' && <PersonConflictList conflicts={conflicts.filter((conflict) => conflict.type != "confirmed")} confirmed={false} /* TODO: this is not beautiful. Set default value *//>}
-            {selectedTab === 'confirmed' && <PersonConflictList conflicts={conflicts.filter((conflict) => conflict.type == "confirmed")} confirmed/>}
+            {selectedTab === 'conflicts' && <PersonConflictList conflicts={conflicts.filter((conflict) => conflict.type != "confirmed")} confirmed={false} /* TODO: this is not beautiful. Set default value */ personId={+id!}/>}
+            {selectedTab === 'confirmed' && <PersonConflictList conflicts={conflicts.filter((conflict) => conflict.type == "confirmed")} confirmed personId={+id!}/>}
           </Box>
         </PageHeader.Navigation>
       </PageHeader>

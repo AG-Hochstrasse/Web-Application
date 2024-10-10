@@ -1,22 +1,32 @@
 import { ArrowLeftIcon } from "@primer/octicons-react";
-import { Button, FormControl, IconButton, PageHeader, Text, Stack, Box, TextInput } from "@primer/react";
+import { Button, FormControl, IconButton, PageHeader, Text, Stack, Box, TextInput, Select, Textarea, Label } from "@primer/react";
 import { supabase } from "../services/supabaseClient";
 import { PostgrestError } from "@supabase/supabase-js";
 import { useState } from "react";
-import {Banner} from '@primer/react/experimental'
-import { UnidentifiedConflict } from "../Interfaces";
+import { Banner } from '@primer/react/experimental'
+import { conflictablePersonFields, UnidentifiedConflict } from "../Interfaces";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 async function createConflict(newData: UnidentifiedConflict) {
-    const { data, error } = await supabase
-      .from('conflicts')
-      .insert(newData);
-  
-    return { data: data, error: error }
-  }
+  const { data, error } = await supabase
+    .from('conflicts')
+    .insert(newData);
+
+  return { data: data, error: error }
+}
 
 export default function CreateConflict() {
-    const [databaseError, setDatabaseError] = useState<PostgrestError | null>()
-    return <>
+  const personId = useParams<{ id: string }>().id
+  const navigate = useNavigate()
+
+  const [databaseError, setDatabaseError] = useState<PostgrestError | null>()
+  const [submitting, setSubmitting] = useState(false)
+
+  const [field, setField] = useState("name")
+  const [type, setType] = useState<"conflict" | "not_confirmed" | "improvement" | "confirmed">("conflict")
+  const [comments, setComments] = useState<string | null>(null)
+
+  return <>
     <PageHeader>
       <PageHeader.TitleArea>
         <PageHeader.LeadingAction><IconButton icon={ArrowLeftIcon} aria-label="Back" variant="invisible" onClick={() => navigate(-1)} /></PageHeader.LeadingAction>
@@ -43,97 +53,48 @@ export default function CreateConflict() {
     <Box as="form">
       <Stack>
         <FormControl>
-          {!insert && <>
-            <FormControl.Label>ID</FormControl.Label>
-            <TextInput monospace disabled value={person!.id} />
-          </>}
+          <FormControl.Label>Field</FormControl.Label>
+          <Select onChange={(e) => setField(e.target.value)}>
+            {conflictablePersonFields.map((field) => (
+              <Select.Option value={field}>{field[0].toUpperCase() + field.slice(1).replaceAll("_", " ")}</Select.Option>
+            ))}
+          </Select>
         </FormControl>
         <FormControl>
-          <FormControl.Label>Fist name</FormControl.Label>
-          {/* @ts-ignore */}
-          <TextInput value={firstName} onChange={(e) => { setFirstName(e.target.value); }} />
-        </FormControl>
-        <FormControl>
-          <FormControl.Label>Name</FormControl.Label>
-          {/* @ts-ignore */}
-          <TextInput required value={name} onChange={(e) => { setName(e.target.value); }} />
-        </FormControl>
-
-        <FormControl>
-          <FormControl.Label>Birth</FormControl.Label>
-          {/* @ts-ignore */}
-          <TextInput value={birth} leadingVisual={CalendarIcon} onChange={(e) => { setBirth(e.target.value); }} />
-        </FormControl>
-
-        <FormControl>
-          <FormControl.Label>Death</FormControl.Label>
-          {/* @ts-ignore */}
-          <TextInput value={death} leadingVisual={CalendarIcon} onChange={(e) => { setDeath(e.target.value ? e.target.value : null); }} />
-        </FormControl>
-
-        <FormControl>
-          <FormControl.Label>Place of birth</FormControl.Label>
-          {/* @ts-ignore */}
-          <TextInput value={birthPlace} onChange={(e) => { setBirthPlace(e.target.value); }} />
-        </FormControl>
-
-        <FormControl>
-          <FormControl.Label>Place of death</FormControl.Label>
-          {/* @ts-ignore */}
-          <TextInput value={deathPlace} onChange={(e) => { setDeathPlace(e.target.value); }} />
-        </FormControl>
-
-        <FormControl>
-          <FormControl.Label>Cause of death</FormControl.Label>
-          {/* @ts-ignore */}
-          <TextInput value={deathCause} onChange={(e) => { setDeathCause(e.target.value); }} />
-        </FormControl>
-
-        <FormControl>
-          <FormControl.Label>Residence</FormControl.Label>
-          {/* @ts-ignore */}
-          <TextInput value={residence} onChange={(e) => { setResidence(e.target.value); }} />
+          <FormControl.Label>Type</FormControl.Label>
+          <Select onChange={(e) => setType(e.target.value as "conflict" | "not_confirmed" | "improvement" | "confirmed")}>
+            <Select.Option value="conflict">Conflict</Select.Option>
+            <Select.Option value="not_confirmed">Not confirmed</Select.Option>
+            <Select.Option value="improvement">Improvement</Select.Option>
+            <Select.Option value="confirmed">Confirmed</Select.Option>
+          </Select>
         </FormControl>
 
         <FormControl>
           <FormControl.Label>Comments</FormControl.Label>
-          {/* @ts-ignore */}
-          <Textarea value={comments} onChange={(e) => { setComments(e.target.value); }} />
-          <FormControl.Caption>For conflicting data, please create a conflict instead after creating this person.</FormControl.Caption>
+          <Textarea required placeholder="Write some text describing you conflict" onChange={(e) => setComments(e.target.value)} />
         </FormControl>
-
         <FormControl>
-          <Button variant="primary" loading={submitting} disabled={submitting} onClick={() => {
-            const a = createConflict({
-              name: name, first_name: firstName, birth: String(birth), hidden: true, state: "open", death: String(death), birth_place: birthPlace, death_place: deathPlace,
-              death_cause: deathCause, residence: residence, comments: comments,
-              born_as: bornAs,
-              work: work,
-              age: age,
-              origin: origin,
-              grave_number: graveNumber,
-              religion: religion,
-              insurance_doc_number: insuranceDocNumber,
-              death_register_number: deathRegisterNumber,
-              stay_time: stayTime,
-              work_start_bs: workStartBS,
-              death_time: deathTime,
-              marriage_status: marriageStatus,
-              children: children,
-              burial_day: burialDay
-            })
-            a.then((response) => {
-              if (response) {
-                setDatabaseError(response.error)
-              }
-            })
+          <Button variant="primary" loading={submitting} disabled={submitting} onClick={async () => {
             setSubmitting(true)
-            setTimeout(() => {
-              navigate("/people")
-            }, 1000)
+            const response = await createConflict({
+              person: +personId!,
+              field: field,
+              comment: comments,
+              type: type,
+              open: true
+            })
+            setSubmitting(false)
+            if (response.error) {
+              setDatabaseError(response.error)
+            }
+            else {
+              setDatabaseError(null)
+              navigate(`/people/${personId}`)
+            }
           }}>Create</Button>
         </FormControl>
       </Stack>
-    </Box>
+    </Box >
   </>
 }

@@ -20,6 +20,7 @@ import { Auth } from '@supabase/auth-ui-react';
 import { supabase } from './services/supabaseClient';
 import WhatsNew from './components/WhatsNew';
 import ConflictDetail from './components/ConflictDetail';
+import CreateConflict from './components/CreateConflict';
 
 export function App() {
   const [loading, setLoading] = useState(true);
@@ -87,6 +88,7 @@ export function App() {
             <Route path="/people/:id" element={<PersonDetail />} />
             <Route path="/people/:id/edit" element={<EditPeople session={session} />} />
             <Route path="/people/new" element={<EditPeople session={session} insert />} />
+            <Route path="/people/:id/conflicts/new" element={<CreateConflict />} />
             <Route path="/conflicts/:id" element={<ConflictDetail />} />
             <Route path="/about" element={<AppAbout />} />
             <Route path="/whatsnew" element={<WhatsNew all />} />
