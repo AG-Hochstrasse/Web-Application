@@ -115,3 +115,30 @@ export const conflictablePersonFields = [
   "exhumation_date",
   "comments"
 ]
+
+export const displayedPersonFields = [
+  "name",
+  "first_name",
+  "birth",
+  "death",
+  "birth_place",
+  "death_place",
+  "death_cause",
+  "residence",
+  "born_as",
+  "work",
+  "age",
+  "origin",
+  "grave_number",
+  "religion",
+  "insurance_doc_number",
+  "death_register_number",
+  "stay_time",
+  "work_start_bs",
+  "death_time",
+  "marriage_status",
+  "children",
+  "burial_day",
+  "exhumation_date",
+  "comments"
+]
