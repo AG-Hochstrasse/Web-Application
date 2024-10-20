@@ -101,6 +101,42 @@ export interface UnidentifiedConflict {
   type: "conflict" | "not_confirmed" | "improvement" | "confirmed";
   open: boolean;
 }
+
+export interface Activity {
+  id: number
+  created_at: string
+  by: string
+  type: string
+  comment: string
+  object: number
+  object_type: string
+}
+
+export interface UnidentifiedActivity {
+  by: string
+  type: string
+  comment: string
+  object: number
+  object_type: string
+}
+
+export enum ActivityType {
+  "person_comment",
+  "person_closed",
+  "person_published",
+  "person_reopened",
+  "person_closed_notplanned",
+  "person_hidden",
+  "conflict_closed",
+  "conflict_reopened",
+  "conflict_comment"
+}
+
+export enum ActivityObjectType {
+  "person",
+  "conflict"
+}
+
 export const conflictablePersonFields = [
   "name",
   "first_name",
