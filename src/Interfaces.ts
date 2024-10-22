@@ -87,6 +87,8 @@ export enum ConflictType {
 export interface Conflict {
   id: number;
   created_at: string;
+  created_by: number
+  created_by_name: string
   person: number;
   field: string; //TODO: create enum type
   comment: string | null;
@@ -96,11 +98,51 @@ export interface Conflict {
 
 export interface UnidentifiedConflict {
   person: number;
+  created_by: number
+  created_by_name: string
   field: string; //TODO: create enum type
   comment: string | null;
   type: "conflict" | "not_confirmed" | "improvement" | "confirmed";
   open: boolean;
 }
+
+export interface Activity {
+  id: number
+  created_at: string
+  by: string
+  type: string
+  comment: string
+  object: number
+  object_type: string
+  by_name: string
+}
+
+export interface UnidentifiedActivity {
+  by: string
+  type: string
+  comment: string
+  object: number
+  object_type: string
+  by_name: string
+}
+
+export enum ActivityType {
+  "person_comment",
+  "person_closed",
+  "person_published",
+  "person_reopened",
+  "person_closed_notplanned",
+  "person_hidden",
+  "conflict_closed",
+  "conflict_reopened",
+  "conflict_comment"
+}
+
+export enum ActivityObjectType {
+  "person",
+  "conflict"
+}
+
 export const conflictablePersonFields = [
   "name",
   "first_name",

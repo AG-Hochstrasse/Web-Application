@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
 import { useState, useEffect, useRef } from 'react';
 
@@ -30,7 +30,7 @@ async function updatePersonHidden(to: boolean, id: number) {
 }
 
 export default function PersonDetail({ session }: any) {
-  const { id } = useParams<{ id: string }>();
+  const { id, tab } = useParams<{ id: string, tab?: string }>();
 
   const [person, setPerson] = useState<any>([]);
   const [conflicts, setConflicts] = useState<Conflict[]>([])
@@ -42,7 +42,7 @@ export default function PersonDetail({ session }: any) {
   const [isOpen, setIsOpen] = useState(false)
   const returnFocusRef = useRef(null)
 
-  const [selectedTab, setSelectedTab] = useState('details');
+  const [selectedTab, setSelectedTab] = useState(tab ?? 'details');
 
   const [retrigger, setRetrigger] = useState(false)
 
@@ -132,6 +132,20 @@ export default function PersonDetail({ session }: any) {
     fetchData();
   }, []);
 
+  const renderSwitch: React.FC = () => {
+    switch(selectedTab) {
+      case "details":
+        return <PersonDetailInfo person={person} conflicts={conflicts} />
+      case "discussion":
+        return <Text>Coming soon...</Text>
+      case "conflicts":
+        return <PersonConflictList conflicts={conflicts.filter((conflict) => conflict.type != "confirmed")} confirmed={false} /* TODO: this is not beautiful. Set default value */ personId={+id!}/>
+      case "confirmed":
+        return <PersonConflictList conflicts={conflicts.filter((conflict) => conflict.type == "confirmed")} confirmed personId={+id!}/>
+      default:
+        return <Navigate to="/not-found" />
+    }
+  }
   if (error) return <div>Error: {error}</div>;
 
   if (loading) return (
@@ -229,7 +243,7 @@ export default function PersonDetail({ session }: any) {
               <PeopleIcon size={16} /> <Text ml={1}>Photos</Text>
             </TabNav.Link>
             <TabNav.Link selected={selectedTab === 'conflicts'} onClick={() => setSelectedTab('conflicts')}>
-              <AlertIcon /> <Text ml={1}>Conflicts {conflicts.length > 0 && <CounterLabel>{conflicts.filter((conflict) => conflict.open && conflict.type != "confirmed").length /* don't need to filter by type because 'confirmed's are always closed */}</CounterLabel>}</Text>
+              <AlertIcon /> <Text ml={1}>Conflicts {conflicts.filter((conflict) => conflict.open ).length > 0 && <CounterLabel>{conflicts.filter((conflict) => conflict.open && conflict.type != "confirmed").length /* don't need to filter by type because 'confirmed's are always closed */}</CounterLabel>}</Text>
             </TabNav.Link>
             <TabNav.Link selected={selectedTab === 'confirmed'} onClick={() => setSelectedTab('confirmed')}>
               <CheckCircleIcon size={16} /> <Text ml={1}>Confirmed data</Text>
@@ -239,11 +253,9 @@ export default function PersonDetail({ session }: any) {
 
           {/* Content for each tab */}
           <Box mt={3}>
-            {selectedTab === 'details' && <PersonDetailInfo person={person} conflicts={conflicts} />}
-            {selectedTab === 'discussion' && <Text>Coming soon...</Text>}
-            {selectedTab === 'photos' && <Text>Coming soon...</Text>}
-            {selectedTab === 'conflicts' && <PersonConflictList conflicts={conflicts.filter((conflict) => conflict.type != "confirmed")} confirmed={false} /* TODO: this is not beautiful. Set default value */ personId={+id!}/>}
-            {selectedTab === 'confirmed' && <PersonConflictList conflicts={conflicts.filter((conflict) => conflict.type == "confirmed")} confirmed personId={+id!}/>}
+            {
+              renderSwitch({} /* empty props */)
+            }
           </Box>
         </PageHeader.Navigation>
       </PageHeader>

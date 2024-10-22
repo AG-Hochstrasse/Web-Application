@@ -230,7 +230,7 @@ export default function EditPeople({ session, insert }: any) {
           <FormControl>
             {!insert && <>
               <FormControl.Label>ID</FormControl.Label>
-              <TextInput monospace disabled value={person!.id} />
+              <TextInput monospace disabled value={person?.id} />
               <FormControl.Caption>The ID cannot be changed.</FormControl.Caption>
             </>}
           </FormControl>
