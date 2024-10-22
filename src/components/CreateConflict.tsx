@@ -2,10 +2,10 @@ import { ArrowLeftIcon } from "@primer/octicons-react";
 import { Button, FormControl, IconButton, PageHeader, Text, Stack, Box, TextInput, Select, Textarea, Label } from "@primer/react";
 import { supabase } from "../services/supabaseClient";
 import { PostgrestError } from "@supabase/supabase-js";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Banner } from '@primer/react/experimental'
-import { conflictablePersonFields, UnidentifiedConflict } from "../Interfaces";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { conflictablePersonFields, UnidentifiedConflict, User } from "../Interfaces";
+import { useNavigate, useParams } from "react-router-dom";
 
 async function createConflict(newData: UnidentifiedConflict) {
   const { data, error } = await supabase
@@ -15,9 +15,11 @@ async function createConflict(newData: UnidentifiedConflict) {
   return { data: data, error: error }
 }
 
-export default function CreateConflict() {
+export default function CreateConflict({session}: any) {
   const personId = useParams<{ id: string }>().id
   const navigate = useNavigate()
+
+  const [user, setUser] = useState<User | null>(null)
 
   const [databaseError, setDatabaseError] = useState<PostgrestError | null>()
   const [submitting, setSubmitting] = useState(false)
@@ -25,6 +27,24 @@ export default function CreateConflict() {
   const [field, setField] = useState("name")
   const [type, setType] = useState<"conflict" | "not_confirmed" | "improvement" | "confirmed">("conflict")
   const [comments, setComments] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function getProfile() {
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user', session.user.id)
+        .single()
+
+      if (error) {
+        console.log(error)
+      } else if (data) {
+        setUser(data)
+      }
+    }
+    getProfile()
+  }, [])
 
   return <>
     <PageHeader>
@@ -78,6 +98,8 @@ export default function CreateConflict() {
           <Button variant="primary" loading={submitting} disabled={submitting} onClick={async () => {
             setSubmitting(true)
             const response = await createConflict({
+              created_by: user ? +user!.id : 0,
+              created_by_name: user?.username ?? "Unknown",
               person: +personId!,
               field: field,
               comment: comments,

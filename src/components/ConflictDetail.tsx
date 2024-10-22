@@ -201,7 +201,7 @@ export default function ConflictDetail({ session }: any) {
         </Timeline.Badge>
         <Timeline.Body>
           <Box>
-            <Text fontWeight="bold">Octocat</Text>
+            <Text fontWeight="bold">{conflict.created_by_name ?? "Octocat"}</Text>
             {/* @ts-ignore */}
             <Text fontSize={1} color="fg.muted"> commented <RelativeTime dateTime={conflict.created_at} /> </Text>
           </Box>

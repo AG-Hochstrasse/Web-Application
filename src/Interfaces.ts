@@ -87,6 +87,8 @@ export enum ConflictType {
 export interface Conflict {
   id: number;
   created_at: string;
+  created_by: number
+  created_by_name: string
   person: number;
   field: string; //TODO: create enum type
   comment: string | null;
@@ -96,6 +98,8 @@ export interface Conflict {
 
 export interface UnidentifiedConflict {
   person: number;
+  created_by: number
+  created_by_name: string
   field: string; //TODO: create enum type
   comment: string | null;
   type: "conflict" | "not_confirmed" | "improvement" | "confirmed";
