@@ -229,7 +229,7 @@ export default function PersonDetail({ session }: any) {
               <PeopleIcon size={16} /> <Text ml={1}>Photos</Text>
             </TabNav.Link>
             <TabNav.Link selected={selectedTab === 'conflicts'} onClick={() => setSelectedTab('conflicts')}>
-              <AlertIcon /> <Text ml={1}>Conflicts {conflicts.length > 0 && <CounterLabel>{conflicts.filter((conflict) => conflict.open && conflict.type != "confirmed").length /* don't need to filter by type because 'confirmed's are always closed */}</CounterLabel>}</Text>
+              <AlertIcon /> <Text ml={1}>Conflicts {conflicts.filter((conflict) => conflict.open ).length > 0 && <CounterLabel>{conflicts.filter((conflict) => conflict.open && conflict.type != "confirmed").length /* don't need to filter by type because 'confirmed's are always closed */}</CounterLabel>}</Text>
             </TabNav.Link>
             <TabNav.Link selected={selectedTab === 'confirmed'} onClick={() => setSelectedTab('confirmed')}>
               <CheckCircleIcon size={16} /> <Text ml={1}>Confirmed data</Text>

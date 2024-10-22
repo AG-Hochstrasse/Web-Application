@@ -227,14 +227,14 @@ export default function ConflictDetail({ session }: any) {
         </Timeline.Item>
       })}
       
-      {conflict.type != "confirmed" && user && <Timeline.Item>
+      {conflict.type != "confirmed" && user && user.conflict_read_write >= 3 && <Timeline.Item>
         <Timeline.Badge>
           <Avatar src="https://github.com/octocat.png" size={40} alt="Octocat" />
         </Timeline.Badge>
         <Timeline.Body>
           <Stack>
-            <Text color="fd.default" fontSize={2}>Close conflict</Text>
-            <Textarea onChange={(e) => { setComment(e.target.value) }} placeholder="Add your comment for closing here..." />
+            <Text color="fg.default" fontSize={2}>Close conflict</Text>
+            <Textarea value={comment} onChange={(e) => { setComment(e.target.value) }} placeholder="Add your comment for closing here..." />
             <Box p={3} display="flex" justifyContent="flex-end">
               <Button variant="primary" disabled={loading || comment.replaceAll(" ", "").replaceAll("\n", "") == ""} onClick={
                 () => {
@@ -256,6 +256,7 @@ export default function ConflictDetail({ session }: any) {
                   })
                   setError(error)
                   setRetrigger(!retrigger)
+                  setComment("")
                 }}>{conflict.open ? "Close" : "Reopen"} with comment</Button>
             </Box>
           </Stack>
