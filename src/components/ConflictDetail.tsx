@@ -218,6 +218,7 @@ export default function ConflictDetail({ session }: any) {
           </Timeline.Badge>
           <Timeline.Body>
             <Box>
+              {/* @ts-ignore */}
               <Text fontWeight="bold">{activityItem.by_name}</Text> {activityItem.type.substring(9)} this <RelativeTime datetime={activityItem.created_at}/>
             </Box>
             <Box mt={2} sx={{ color: 'fg.default'}}>
