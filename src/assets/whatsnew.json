@@ -1,5 +1,14 @@
 [
     {
+        "description": "Conflicts can now be closed",
+        "version": "1.0.0",
+        "thread": 52
+    },
+    {
+        "description": "Many bugfixes",
+        "version": "1.0.0"
+    },
+    {
         "description": "You can now create conflicts",
         "version": "0.8.1",
         "thread": "51"
