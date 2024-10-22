@@ -24,22 +24,17 @@ export default function PeopleTable({ all }: any) {
     row.birth?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     row.death?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     row.grave_number?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ).slice(0, all ? data.length-1 : 10);
 
   const navigate = useNavigate()
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data, error } = all ? await supabase
+        const { data, error } = await supabase
           .from('people')
           .select('*') 
 //          .eq('exhumed', false)
-        : await supabase
-          .from('people')
-          .select('*')
-//          .eq('exhumed', false)
-          .limit(10)
 
         if (error) {
           throw error;
