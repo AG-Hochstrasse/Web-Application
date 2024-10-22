@@ -110,6 +110,7 @@ export interface Activity {
   comment: string
   object: number
   object_type: string
+  by_name: string
 }
 
 export interface UnidentifiedActivity {
@@ -118,6 +119,7 @@ export interface UnidentifiedActivity {
   comment: string
   object: number
   object_type: string
+  by_name: string
 }
 
 export enum ActivityType {

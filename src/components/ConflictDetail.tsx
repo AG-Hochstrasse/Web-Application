@@ -210,6 +210,22 @@ export default function ConflictDetail({ session }: any) {
           </Box>
         </Timeline.Body>
       </Timeline.Item>
+
+      {activity.map( (activityItem) => {
+        return <Timeline.Item>
+          <Timeline.Badge>
+            <Avatar src="https://github.com/octocat.png" size={40} alt="Octocat" />
+          </Timeline.Badge>
+          <Timeline.Body>
+            <Box>
+              <Text fontWeight="bold">{activityItem.by_name}</Text> {activityItem.type.substring(9)} this <RelativeTime datetime={activityItem.created_at}/>
+            </Box>
+            <Box mt={2} sx={{ color: 'fg.default'}}>
+              <Text>{activityItem.comment}</Text>
+            </Box>
+          </Timeline.Body>
+        </Timeline.Item>
+      })}
       
       {conflict.type != "confirmed" && user && <Timeline.Item>
         <Timeline.Badge>
@@ -231,7 +247,9 @@ export default function ConflictDetail({ session }: any) {
                     type: conflict.open ? "conflict_closed" : "conflict_reopened",
                     comment: comment,
                     object: conflict.id,
-                    object_type: "conflict"
+                    object_type: "conflict",
+                    by_name: user.username ?? 
+                    user.id
                   })
                   b.then((response) => {
                     if (response.error) setDatabaseError(response.error)
