@@ -91,8 +91,8 @@ export function App() {
 
             <Route path="/people/:id/edit" element={<EditPeople session={session} />} />
             <Route path="/people/new" element={<EditPeople session={session} insert />} />
-            <Route path="/people/:id/conflicts/new" element={<CreateConflict />} />
-            <Route path="/conflicts/:id" element={<ConflictDetail />} />
+            <Route path="/people/:id/conflicts/new" element={<CreateConflict session={session} />} />
+            <Route path="/conflicts/:id" element={<ConflictDetail session={session} />} />
             <Route path="/about" element={<AppAbout />} />
             <Route path="/whatsnew" element={<WhatsNew all />} />
             <Route path="/account" element={<AppAccount session={session} />} />
