@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
 import { useState, useEffect, useRef } from 'react';
 
@@ -48,6 +48,8 @@ export default function PersonDetail({ session }: any) {
 
   const navigate = useNavigate();
 
+  const location = useLocation();
+
   //fetch user
   useEffect(() => {
     let ignore = false
@@ -80,16 +82,23 @@ export default function PersonDetail({ session }: any) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data, error } = await supabase
+        const { data, error } = location.pathname.includes("grave") ? await supabase
           .from('people')
           .select('*')
-          .eq('id', id);
+          .eq('grave_number', id)
+          : await supabase
+            .from('people')
+            .select('*')
+            .eq('id', id)
+
 
         if (error) {
           throw error;
         }
 
         setPerson(data[0]);
+
+        await fetchConflicts(data[0].id);
       } catch (error) {
         if (error instanceof Error) {
           setError(error.message);
@@ -104,10 +113,11 @@ export default function PersonDetail({ session }: any) {
     fetchData();
   }, [retrigger]);
 
-  // fetch conflicts
-  useEffect(() => {
-    const fetchData = async () => {
+    const fetchConflicts = async (id: string) => {
       try {
+        if (person == undefined || person == null) {
+          alert("Null")
+        }
         const { data, error } = await supabase
           .from('conflicts')
           .select('*')
@@ -128,9 +138,6 @@ export default function PersonDetail({ session }: any) {
         setLoading(false);
       }
     };
-
-    fetchData();
-  }, []);
 
   const renderSwitch: React.FC = () => {
     switch(selectedTab) {

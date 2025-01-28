@@ -1,5 +1,10 @@
 [
     {
+        "description": "People page can now be opened by grave number (/people/grave/:number)",
+        "version": "1.0.1",
+        "thread": 87
+    },
+    {
         "description": "Conflicts can now be closed",
         "version": "1.0.0",
         "thread": 52

@@ -88,6 +88,8 @@ export function App() {
             <Route path="/people" element={<PeopleTable all />} />
             <Route path="/people/:id" element={<PersonDetail session={session} />} />
             <Route path="/people/:id/:tab" element={<PersonDetail session={session} />} />
+            <Route path="/people/grave/:id" element={<PersonDetail session={session} />} />
+            <Route path="/people/grave/:id/:tab" element={<PersonDetail session={session} />} />
 
             <Route path="/people/:id/edit" element={<EditPeople session={session} />} />
             <Route path="/people/new" element={<EditPeople session={session} insert />} />
