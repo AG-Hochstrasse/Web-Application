@@ -98,7 +98,9 @@ export default function PersonDetail({ session }: any) {
 
         setPerson(data[0]);
 
-        await fetchConflicts(data[0].id);
+        if (data[0]) {
+          await fetchConflicts(data[0].id);
+        }
       } catch (error) {
         if (error instanceof Error) {
           setError(error.message);
