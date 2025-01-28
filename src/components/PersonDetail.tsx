@@ -117,9 +117,6 @@ export default function PersonDetail({ session }: any) {
 
     const fetchConflicts = async (id: string) => {
       try {
-        if (person == undefined || person == null) {
-          alert("Null")
-        }
         const { data, error } = await supabase
           .from('conflicts')
           .select('*')
