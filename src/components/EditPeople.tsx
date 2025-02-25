@@ -385,7 +385,7 @@ export default function EditPeople({ session, insert }: any) {
             {insert ? <Button variant="primary" loading={submitting} disabled={submitting} onClick={() => {
               const a = createPerson({
                 state: "open",
-                name: name, first_name: firstName, birth: String(birth), hidden: true, state: state, death: String(death), birth_place: birthPlace, death_place: deathPlace,
+                name: name, first_name: firstName, birth: String(birth), hidden: true, death: String(death), birth_place: birthPlace, death_place: deathPlace,
                 death_cause: deathCause, residence: residence, comments: comments,
                 born_as: bornAs,
                 work: work,
