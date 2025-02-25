@@ -329,7 +329,7 @@ export default function EditPeople({ session, insert }: any) {
               <FormControl>
                 <FormControl.Label>Death register number</FormControl.Label>
                 {/* @ts-ignore */}
-                <TextInput type="number" leadingVisual={NumberIcon} value={deathRegisterNumber} onChange={(e) => { setDeathRegisterNumber(e.target.value); }} />
+                <TextInput type="text" leadingVisual={NumberIcon} value={deathRegisterNumber} onChange={(e) => { setDeathRegisterNumber(e.target.value); }} />
               </FormControl>
               <FormControl>
                 <FormControl.Label>Time of stay (days)</FormControl.Label>
