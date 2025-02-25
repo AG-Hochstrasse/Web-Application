@@ -1,5 +1,10 @@
 [
     {
+        "description": "You can now add external links to people in the links tab.",
+        "version": "1.1.0",
+        "thread": 38
+    },
+    {
         "description": "People page can now be opened by grave number (/people/grave/:number)",
         "version": "1.0.1",
         "thread": 87
