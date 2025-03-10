@@ -38,7 +38,7 @@ const PersonDetailInfo = (props: PersonDetailInfoPros) => {
           return (
             fieldValue != null && (
               <div key={field}>
-                <Text as="strong">{field.replaceAll('_', ' ').toUpperCase()} </Text>
+                <Text as="strong">{field.replaceAll('_', ' ').toUpperCase()}</Text>
                 <br />
                 <Text>{fieldValue.toString()}</Text>
                 <LabelGroup sx={{mt: 1}}>
