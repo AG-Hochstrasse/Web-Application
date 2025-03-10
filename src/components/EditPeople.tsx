@@ -294,7 +294,7 @@ export default function EditPeople({ session, insert }: any) {
               <FormControl>
                 <FormControl.Label>Born as</FormControl.Label>
                 {/* @ts-ignore */}
-                <TextInput value={bornAs} onChange={(e) => { alert(bornAs); setBornAs(e.target.value); }} />
+                <TextInput value={bornAs} onChange={(e) => { setBornAs(e.target.value); }} />
               </FormControl>
               <FormControl>
                 <FormControl.Label>Work</FormControl.Label>

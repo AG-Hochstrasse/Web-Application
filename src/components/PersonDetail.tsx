@@ -3,7 +3,7 @@ import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '../services/supabaseClient';
 import { useState, useEffect, useRef } from 'react';
 
-import { StateLabel, Box, PageHeader, RelativeTime, Button, Label, Dialog, Text, TabNav, IconButton, Stack, CounterLabel, ButtonGroup, ActionMenu, ActionList } from '@primer/react';
+import { StateLabel, Box, PageHeader, RelativeTime, Button, Label, Dialog, Text, TabNav, IconButton, Stack, CounterLabel, ButtonGroup, ActionMenu, ActionList, PageLayout } from '@primer/react';
 import { NoteIcon, AlertIcon, PeopleIcon, CommentDiscussionIcon, ArrowLeftIcon, CheckCircleIcon, IssueClosedIcon, IssueTrackedByIcon, IssueReopenedIcon, LinkIcon } from '@primer/octicons-react';
 import { SkeletonText, Banner } from '@primer/react/drafts';
 import PersonDetailInfo from './PersonDetailInfo';
@@ -11,6 +11,8 @@ import { Conflict, User } from '../Interfaces';
 import PersonConflictList from './PersonConflictList';
 import { PostgrestError } from '@supabase/supabase-js'
 import PersonLinkList from './PersonLinkList';
+import PersonDetailPane from './PersonDetailPane';
+import { getPersonByGrave, getPersonById, getUsersById } from '../services/database';
 
 export async function updatePersonState(to: string, id: number) {
   const { data, error } = await supabase
@@ -83,21 +85,18 @@ export default function PersonDetail({ session }: any) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data, error } = location.pathname.includes("grave") ? await supabase
-          .from('people')
-          .select('*')
-          .eq('grave_number', id)
-          : await supabase
-            .from('people')
-            .select('*')
-            .eq('id', id)
+        let { data, error } = location.pathname.includes("grave") ? await getPersonByGrave(id?.toString() ?? "")
+          : await getPersonById(Number(id))
 
 
         if (error) {
           throw error;
         }
 
-        setPerson(data[0]);
+        data.assigned_users = await getUsersById(data.assigned_users)
+        alert(JSON.stringify(data.assigned_users))
+        alert("_"+JSON.stringify(data.assigned_users))
+        setPerson(data);
 
         if (data[0]) {
           await fetchConflicts(data[0].id);
@@ -213,115 +212,119 @@ export default function PersonDetail({ session }: any) {
   <Button icon={ArrowLeftIcon} onClick={() => navigate(-1)} />
   </>
   return (
-    <Box
-      sx={{
-        padding: 3,
-      }}
+    <PageLayout
+      containerWidth="full"
     >
-      <PageHeader>
-        <PageHeader.TitleArea>
-          <PageHeader.LeadingAction><IconButton icon={ArrowLeftIcon} aria-label="Back" variant="invisible" onClick={() => navigate("/")} /></PageHeader.LeadingAction>
-          <PageHeader.Title>{person.first_name} {person.name}</PageHeader.Title>
-          <PageHeader.TrailingVisual sx={{color: '#59636e', fontWeight: 'normal'}}>#{person.id}</PageHeader.TrailingVisual>
-        </PageHeader.TitleArea>
-        <PageHeader.Description>
-          {/* @ts-ignore */}
-          <StateLabel status={person.state == "open" ? "issueOpened" : person.state == "closed" ? "issueClosed" : person.state == "canceled" ? "issueClosedNotPlanned" : "unavailable"}>{person.state == "open" ? "Open" : person.state == "closed" || person.state == "canceled" ? "Closed" : "Unavailable"}</StateLabel>
-          <Label variant={person.hidden ? "secondary" : "success"}>{person.hidden ? "Hidden" : "Published"}</Label>
-          {/* @ts-ignore */}
-          Created <RelativeTime dateTime={person.created_at} />
-        </PageHeader.Description>
-        <PageHeader.Actions>
-          { ((user?.read_write ?? 0) >= (person.hidden ? 3 : 4)) && <Button onClick={() => {navigate(`/people/${id}/edit`)}}>Edit</Button> }
-          <Button variant="primary"
-            data-testid="trigger-button"
-            ref={returnFocusRef}
-            onClick={() => setIsOpen(true)}
-          >{person.state == "open" ? "Close" : "Reopen"} or {person.hidden ? "publish" : "unpublish"}</Button>
-        </PageHeader.Actions>
-        <PageHeader.Navigation>
-          {/* @ts-ignore */}
-          <TabNav aria-label="Main">
-            <TabNav.Link selected={selectedTab === 'details'} onClick={() => setSelectedTab('details')}>
-              <NoteIcon size={16} /> <Text ml={1}>Info</Text>
-            </TabNav.Link>
-            <TabNav.Link selected={selectedTab === 'links'} onClick={() => setSelectedTab('links')}>
-              <LinkIcon size={16} /> <Text ml={1}>Links</Text>
-            </TabNav.Link>
-            <TabNav.Link selected={selectedTab === 'discussion'} onClick={() => setSelectedTab('discussion')}>
-              <CommentDiscussionIcon size={16} /> <Text ml={1}>Discussion</Text>
-            </TabNav.Link>
-            <TabNav.Link selected={selectedTab === 'photos'} onClick={() => setSelectedTab('photos')}>
-              <PeopleIcon size={16} /> <Text ml={1}>Photos</Text>
-            </TabNav.Link>
-            <TabNav.Link selected={selectedTab === 'conflicts'} onClick={() => setSelectedTab('conflicts')}>
-              <AlertIcon /> <Text ml={1}>Conflicts {conflicts.filter((conflict) => conflict.open ).length > 0 && <CounterLabel>{conflicts.filter((conflict) => conflict.open && conflict.type != "confirmed").length /* don't need to filter by type because 'confirmed's are always closed */}</CounterLabel>}</Text>
-            </TabNav.Link>
-            <TabNav.Link selected={selectedTab === 'confirmed'} onClick={() => setSelectedTab('confirmed')}>
-              <CheckCircleIcon size={16} /> <Text ml={1}>Confirmed data</Text>
-            </TabNav.Link>
-          </TabNav>
-          {databaseError && <Banner title="Error" description={<Text>{databaseError.message}</Text>} variant="critical"/>}
+      <PageLayout.Header>
+        <PageHeader>
+          <PageHeader.TitleArea>
+            <PageHeader.LeadingAction><IconButton icon={ArrowLeftIcon} aria-label="Back" variant="invisible" onClick={() => navigate("/")} /></PageHeader.LeadingAction>
+            <PageHeader.Title>{person.first_name} {person.name}</PageHeader.Title>
+            <PageHeader.TrailingVisual sx={{color: '#59636e', fontWeight: 'normal'}}>#{person.id}</PageHeader.TrailingVisual>
+          </PageHeader.TitleArea>
+          <PageHeader.Description>
+            {/* @ts-ignore */}
+            <StateLabel status={person.state == "open" ? "issueOpened" : person.state == "closed" ? "issueClosed" : person.state == "canceled" ? "issueClosedNotPlanned" : "unavailable"}>{person.state == "open" ? "Open" : person.state == "closed" || person.state == "canceled" ? "Closed" : "Unavailable"}</StateLabel>
+            <Label variant={person.hidden ? "secondary" : "success"}>{person.hidden ? "Hidden" : "Published"}</Label>
+            {/* @ts-ignore */}
+            Created <RelativeTime dateTime={person.created_at} />
+          </PageHeader.Description>
+          <PageHeader.Actions>
+            { ((user?.read_write ?? 0) >= (person.hidden ? 3 : 4)) && <Button onClick={() => {navigate(`/people/${id}/edit`)}}>Edit</Button> }
+            <Button variant="primary"
+              data-testid="trigger-button"
+              ref={returnFocusRef}
+              onClick={() => setIsOpen(true)}
+            >{person.state == "open" ? "Close" : "Reopen"} or {person.hidden ? "publish" : "unpublish"}</Button>
+          </PageHeader.Actions>
+          <PageHeader.Navigation>
+            {/* @ts-ignore */}
+            <TabNav aria-label="Main">
+              <TabNav.Link selected={selectedTab === 'details'} onClick={() => setSelectedTab('details')}>
+                <NoteIcon size={16} /> <Text ml={1}>Info</Text>
+              </TabNav.Link>
+              <TabNav.Link selected={selectedTab === 'links'} onClick={() => setSelectedTab('links')}>
+                <LinkIcon size={16} /> <Text ml={1}>Links</Text>
+              </TabNav.Link>
+              <TabNav.Link selected={selectedTab === 'discussion'} onClick={() => setSelectedTab('discussion')}>
+                <CommentDiscussionIcon size={16} /> <Text ml={1}>Discussion</Text>
+              </TabNav.Link>
+              <TabNav.Link selected={selectedTab === 'photos'} onClick={() => setSelectedTab('photos')}>
+                <PeopleIcon size={16} /> <Text ml={1}>Photos</Text>
+              </TabNav.Link>
+              <TabNav.Link selected={selectedTab === 'conflicts'} onClick={() => setSelectedTab('conflicts')}>
+                <AlertIcon /> <Text ml={1}>Conflicts {conflicts.filter((conflict) => conflict.open ).length > 0 && <CounterLabel>{conflicts.filter((conflict) => conflict.open && conflict.type != "confirmed").length /* don't need to filter by type because 'confirmed's are always closed */}</CounterLabel>}</Text>
+              </TabNav.Link>
+              <TabNav.Link selected={selectedTab === 'confirmed'} onClick={() => setSelectedTab('confirmed')}>
+                <CheckCircleIcon size={16} /> <Text ml={1}>Confirmed data</Text>
+              </TabNav.Link>
+            </TabNav>
+            {databaseError && <Banner title="Error" description={<Text>{databaseError.message}</Text>} variant="critical"/>}
 
-          {/* Content for each tab */}
-          <Box mt={3}>
-            {
-              renderSwitch({} /* empty props */)
-            }
-          </Box>
-        </PageHeader.Navigation>
-      </PageHeader>
-      {/* @ts-ignore */}
-      <Dialog returnFocusRef={returnFocusRef} isOpen={isOpen} onDismiss={() => setIsOpen(false)} aria-labelledby="header" >
-        <div data-testid="inner">
-          {/* @ts-ignore */}
-          <Dialog.Header id="header">{person.state == "open" ? "Close" : "Reopen"} or {person.hidden ? "publish" : "unpublish"} person</Dialog.Header>
-          <Box p={3}>
-            <Text>
-              Publishing a person makes it visible in generated documents using this database and for all visitors of this website (future).
-              <br /><br />
-              Closing a person marks it as done and complete. Only close a person when it's completeley done and all fields are confirmed.
-            </Text>
-          </Box>
-          <Box p={3} borderTop="1px solid" borderColor="border.default">
-            {<Button sx={{mb: 2}} block variant="primary" onClick={
-              () => {
-                const a = updatePersonState(person.state == "open" ? "closed" : "open", person.id)
-                a.then((response) => {
-                  if (response.error) setDatabaseError(response.error)
-                })
-                setError(error)
-                setIsOpen(false)
-                setRetrigger(!retrigger)
-              }}>{person.state == "open" ? "Close" : "Reopen"} person</Button>}
-              {person.state != "canceled" && 
-              <Button sx={{mb: 2}} block onClick={
+            {/* Content for each tab */}
+            <Box mt={3}>
+              {
+                renderSwitch({} /* empty props */)
+              }
+            </Box>
+          </PageHeader.Navigation>
+        </PageHeader>
+      </PageLayout.Header>
+      <PageLayout.Pane sticky={true}>
+        <PersonDetailPane person={person} />
+      </PageLayout.Pane>
+      <PageLayout.Content>{/* @ts-ignore */}
+        <Dialog returnFocusRef={returnFocusRef} isOpen={isOpen} onDismiss={() => setIsOpen(false)} aria-labelledby="header" >
+          <div data-testid="inner">
+            {/* @ts-ignore */}
+            <Dialog.Header id="header">{person.state == "open" ? "Close" : "Reopen"} or {person.hidden ? "publish" : "unpublish"} person</Dialog.Header>
+            <Box p={3}>
+              <Text>
+                Publishing a person makes it visible in generated documents using this database and for all visitors of this website (future).
+                <br /><br />
+                Closing a person marks it as done and complete. Only close a person when it's completeley done and all fields are confirmed.
+              </Text>
+            </Box>
+            <Box p={3} borderTop="1px solid" borderColor="border.default">
+              {<Button sx={{mb: 2}} block variant="primary" onClick={
                 () => {
-                  const a = updatePersonState("canceled", person.id)
+                  const a = updatePersonState(person.state == "open" ? "closed" : "open", person.id)
                   a.then((response) => {
                     if (response.error) setDatabaseError(response.error)
                   })
-                setError(error)
-                setIsOpen(false)
-                setRetrigger(!retrigger)
-                }
-              }>Close as not planned</Button>}
-              <Button block onClick={
-                () => {
-                  const a = updatePersonHidden(!person.hidden, person.id)
-                  a.then((response) => {
-                    if (response.error) setDatabaseError(response.error)
-                  })
-                setError(error)
-                setIsOpen(false)
-                setRetrigger(!retrigger)
-                }
-              }>{person.hidden ? "Publish" : "Unpublish"} person</Button>
-              
-              
-          </Box>
-        </div>
-      </Dialog>
-    </Box>
+                  setError(error)
+                  setIsOpen(false)
+                  setRetrigger(!retrigger)
+                }}>{person.state == "open" ? "Close" : "Reopen"} person</Button>}
+                {person.state != "canceled" && 
+                <Button sx={{mb: 2}} block onClick={
+                  () => {
+                    const a = updatePersonState("canceled", person.id)
+                    a.then((response) => {
+                      if (response.error) setDatabaseError(response.error)
+                    })
+                  setError(error)
+                  setIsOpen(false)
+                  setRetrigger(!retrigger)
+                  }
+                }>Close as not planned</Button>}
+                <Button block onClick={
+                  () => {
+                    const a = updatePersonHidden(!person.hidden, person.id)
+                    a.then((response) => {
+                      if (response.error) setDatabaseError(response.error)
+                    })
+                  setError(error)
+                  setIsOpen(false)
+                  setRetrigger(!retrigger)
+                  }
+                }>{person.hidden ? "Publish" : "Unpublish"} person</Button>
+                
+                
+            </Box>
+          </div>
+        </Dialog>
+      </PageLayout.Content>
+    </PageLayout>
   );
 };

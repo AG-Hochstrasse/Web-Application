@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
 import { useState, useEffect, useRef } from 'react';
 import { Person, Conflict, displayedPersonFields, ConflictType } from '../Interfaces';
-import { Box, Heading, RelativeTime, Button, Label, Dialog, Text, TabNav, IconButton, LabelGroup } from '@primer/react';
+import { Box, Heading, RelativeTime, Button, Label, Dialog, Text, TabNav, IconButton, LabelGroup, PageLayout } from '@primer/react';
 
 interface PersonDetailInfoPros {
   person: Person

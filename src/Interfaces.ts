@@ -29,6 +29,7 @@ export interface Person {
   exhumed: boolean;
   exhumation_date: string | null;
   auto_added: boolean;
+  assigned_users: User[];
 }
 
 export interface UnIdentifiedPerson {
