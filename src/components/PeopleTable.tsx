@@ -10,50 +10,25 @@ import StateIcon from './StateIcon';
 
 import { Person } from '../Interfaces';
 import { TableContainer } from '@primer/react/lib-esm/DataTable/Table';
+import { usePeople } from '../hooks/usePeople';
+import { preProcessFile } from 'typescript';
 
 export default function PeopleTable({ all }: any) {
-  const [data, setData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const { people, error } = usePeople();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const filteredData = data.filter((row: Person) =>
+  const filteredData = people?.filter((row: Person) =>
     row.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     String(row.id).includes(searchQuery) ||
     (row.first_name?.toLowerCase() + " " + row.name.toLowerCase()).includes(searchQuery.toLowerCase()) ||
     row.birth?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     row.death?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     row.grave_number?.toLowerCase().includes(searchQuery.toLowerCase())
-  ).slice(0, all ? data.length-1 : 10);
+  ).slice(0, all && people ? people.length-1 : 10) ?? [];
 
   const navigate = useNavigate()
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('people')
-          .select('*') 
-//          .eq('exhumed', false)
-
-        if (error) {
-          throw error;
-        }
-
-        setData(data);
-      } catch (error) {
-        if (error instanceof Error) {
-          setError(error.message);
-        } else {
-          setError('An unknown error occurred');
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
 
 
   if (error) return <Banner
@@ -70,7 +45,7 @@ export default function PeopleTable({ all }: any) {
     return <Stack direction="horizontal" align="center"><Spinner /><Text>Loading...</Text></Stack>
   }
 
-  if (!data || data.length === 0) {
+  if (!people || people.length === 0) {
     return <Box my={4}>No data available</Box>;
   }
 
