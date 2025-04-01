@@ -4,14 +4,15 @@ import { supabase } from '../services/supabaseClient';
 import { useState, useEffect, useRef } from 'react';
 
 import { StateLabel, Box, PageHeader, RelativeTime, Button, Label, Dialog, Text, TabNav, IconButton, Stack, CounterLabel, ButtonGroup, ActionMenu, ActionList } from '@primer/react';
-import { NoteIcon, AlertIcon, PeopleIcon, CommentDiscussionIcon, ArrowLeftIcon, CheckCircleIcon, IssueClosedIcon, IssueTrackedByIcon, IssueReopenedIcon } from '@primer/octicons-react';
+import { NoteIcon, AlertIcon, PeopleIcon, CommentDiscussionIcon, ArrowLeftIcon, CheckCircleIcon, IssueClosedIcon, IssueTrackedByIcon, IssueReopenedIcon, LinkIcon } from '@primer/octicons-react';
 import { SkeletonText, Banner } from '@primer/react/drafts';
 import PersonDetailInfo from './PersonDetailInfo';
 import { Conflict, User } from '../Interfaces';
 import PersonConflictList from './PersonConflictList';
 import { PostgrestError } from '@supabase/supabase-js'
+import PersonLinkList from './PersonLinkList';
 
-async function updatePersonState(to: string, id: number) {
+export async function updatePersonState(to: string, id: number) {
   const { data, error } = await supabase
     .from('people')
     .update({state: to})
@@ -20,7 +21,7 @@ async function updatePersonState(to: string, id: number) {
   return { data, error }
 }
 
-async function updatePersonHidden(to: boolean, id: number) {
+export async function updatePersonHidden(to: boolean, id: number) {
   const { data, error } = await supabase
     .from('people')
     .update({hidden: to})
@@ -30,7 +31,7 @@ async function updatePersonHidden(to: boolean, id: number) {
 }
 
 export default function PersonDetail({ session }: any) {
-  const { id, tab } = useParams<{ id: string, tab?: string }>();
+  const { id, tab } = useParams<{ id: string, tab?: "details" | "discussion" | "photos" | "conflicts" | "confirmed" | "links" }>();
 
   const [person, setPerson] = useState<any>([]);
   const [conflicts, setConflicts] = useState<Conflict[]>([])
@@ -42,7 +43,7 @@ export default function PersonDetail({ session }: any) {
   const [isOpen, setIsOpen] = useState(false)
   const returnFocusRef = useRef(null)
 
-  const [selectedTab, setSelectedTab] = useState(tab ?? 'details');
+  const [selectedTab, setSelectedTab] = useState<"details" | "discussion" | "photos" | "conflicts" | "confirmed" | "links">(tab ?? 'details');
 
   const [retrigger, setRetrigger] = useState(false)
 
@@ -142,6 +143,8 @@ export default function PersonDetail({ session }: any) {
     switch(selectedTab) {
       case "details":
         return <PersonDetailInfo person={person} conflicts={conflicts} />
+      case "links":
+        return <PersonLinkList person={person} />
       case "discussion":
         return <Text>Coming soon...</Text>
       case "conflicts":
@@ -241,6 +244,9 @@ export default function PersonDetail({ session }: any) {
           <TabNav aria-label="Main">
             <TabNav.Link selected={selectedTab === 'details'} onClick={() => setSelectedTab('details')}>
               <NoteIcon size={16} /> <Text ml={1}>Info</Text>
+            </TabNav.Link>
+            <TabNav.Link selected={selectedTab === 'links'} onClick={() => setSelectedTab('links')}>
+              <LinkIcon size={16} /> <Text ml={1}>Links</Text>
             </TabNav.Link>
             <TabNav.Link selected={selectedTab === 'discussion'} onClick={() => setSelectedTab('discussion')}>
               <CommentDiscussionIcon size={16} /> <Text ml={1}>Discussion</Text>

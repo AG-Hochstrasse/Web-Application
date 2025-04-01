@@ -1,5 +1,20 @@
 [
     {
+        "description": "Fix bug that re-opens people when they are edited.",
+        "version": "1.1.1",
+        "thread": 96
+    },
+    {
+        "description": "Fix bug that does not allow slashes in death register number.",
+        "version": "1.1.1",
+        "thread": 97
+    },
+    {
+        "description": "You can now add external links to people in the links tab.",
+        "version": "1.1.0",
+        "thread": 38
+    },
+    {
         "description": "People page can now be opened by grave number (/people/grave/:number)",
         "version": "1.0.1",
         "thread": 87

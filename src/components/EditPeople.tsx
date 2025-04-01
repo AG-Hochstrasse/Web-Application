@@ -329,7 +329,7 @@ export default function EditPeople({ session, insert }: any) {
               <FormControl>
                 <FormControl.Label>Death register number</FormControl.Label>
                 {/* @ts-ignore */}
-                <TextInput type="number" leadingVisual={NumberIcon} value={deathRegisterNumber} onChange={(e) => { setDeathRegisterNumber(e.target.value); }} />
+                <TextInput type="text" leadingVisual={NumberIcon} value={deathRegisterNumber} onChange={(e) => { setDeathRegisterNumber(e.target.value); }} />
               </FormControl>
               <FormControl>
                 <FormControl.Label>Time of stay (days)</FormControl.Label>
@@ -384,7 +384,8 @@ export default function EditPeople({ session, insert }: any) {
           <FormControl>
             {insert ? <Button variant="primary" loading={submitting} disabled={submitting} onClick={() => {
               const a = createPerson({
-                name: name, first_name: firstName, birth: String(birth), hidden: true, state: "open", death: String(death), birth_place: birthPlace, death_place: deathPlace,
+                state: "open",
+                name: name, first_name: firstName, birth: String(birth), hidden: true, death: String(death), birth_place: birthPlace, death_place: deathPlace,
                 death_cause: deathCause, residence: residence, comments: comments,
                 born_as: bornAs,
                 work: work,
@@ -416,7 +417,8 @@ export default function EditPeople({ session, insert }: any) {
             }}>Create</Button> :
               <Button variant="primary" loading={submitting} disabled={submitting} onClick={() => {
                 const a = editPerson({
-                  name: name, first_name: firstName, birth: String(birth), hidden: true, state: "open", death: String(death), birth_place: birthPlace, death_place: deathPlace,
+                  state: person!.state,
+                  name: name, first_name: firstName, birth: String(birth), hidden: true, death: String(death), birth_place: birthPlace, death_place: deathPlace,
                   death_cause: deathCause, residence: residence, comments: comments,
                   born_as: bornAs,
                   work: work,

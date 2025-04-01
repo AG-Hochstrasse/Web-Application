@@ -92,7 +92,7 @@ export default function CreateConflict({session}: any) {
 
         <FormControl>
           <FormControl.Label>Comments</FormControl.Label>
-          <Textarea required placeholder="Write some text describing you conflict" onChange={(e) => setComments(e.target.value)} />
+          <Textarea required placeholder="Write some text describing your conflict/field confirmation" onChange={(e) => setComments(e.target.value)} />
         </FormControl>
         <FormControl>
           <Button variant="primary" loading={submitting} disabled={submitting} onClick={async () => {

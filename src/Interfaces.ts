@@ -197,3 +197,11 @@ export const displayedPersonFields = [
   "exhumation_date",
   "comments"
 ]
+
+export interface Link {
+  id: number
+  created_at: Date
+  url: string
+  name: string
+  person: number
+}
