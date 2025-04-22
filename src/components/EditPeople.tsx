@@ -319,7 +319,7 @@ export default function EditPeople({ session, insert }: any) {
               <FormControl>
                 <FormControl.Label>Religion</FormControl.Label>
                 {/* @ts-ignore */}
-                <TextInput value={religion} onChange={(e) => { setreligion(e.target.value); }} />
+                <TextInput value={religion} onChange={(e) => { setReligion(e.target.value); }} />
               </FormControl>
               <FormControl>
                 <FormControl.Label>Insurance doc number</FormControl.Label>
