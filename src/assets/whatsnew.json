@@ -1,5 +1,13 @@
 [
     {
+        "description": "Show progress on home page",
+        "version": "1.2.0"
+    },
+    {
+        "description": "All fields are handled correctly when editing people.",
+        "version": "1.2.0"
+    },
+    {
         "description": "Fix bug that re-opens people when they are edited.",
         "version": "1.1.1",
         "thread": 96

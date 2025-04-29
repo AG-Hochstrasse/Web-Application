@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { User } from '../Interfaces';
 import { supabase } from '../services/supabaseClient';
 import { Banner } from '@primer/react/drafts';
+import Progress from './Progress';
 
 export default function AppHome(props: any) {
   const [user, setUser] = useState<User | null>(null)
@@ -53,6 +54,8 @@ export default function AppHome(props: any) {
       </Text>
     } variant="upsell" />}
     <WhatsNew />
+    
+    <Progress />
     
     <PeopleTable />
     
