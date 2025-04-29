@@ -39,7 +39,7 @@ export default function Progress() {
             </Stack>
             <Stack direction="horizontal" gap="condensed" align="center">
                 <DotFillIcon fill="#0969da" />
-                In porgress ({open})
+                In progress ({open})
             </Stack>
         </Stack>
     </>
