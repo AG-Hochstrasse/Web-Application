@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../services/supabaseClient";
-import { Person, UnIdentifiedPerson, User } from "../Interfaces";
+import { displayedPersonFields, Person, UnIdentifiedPerson, User } from "../Interfaces";
 import { PageHeader, Box, IconButton, FormControl, TextInput, Spinner, Stack, Text, Textarea, Button, Details, useDetails, Checkbox } from '@primer/react';
 import { ArrowLeftIcon, CalendarIcon, ClockIcon, FoldIcon, NumberIcon } from '@primer/octicons-react';
 import { useNavigate, useParams } from "react-router-dom";
 import { Banner } from '@primer/react/experimental'
 import { darkThemes } from "@supabase/auth-ui-shared";
 import { PostgrestError } from "@supabase/supabase-js";
+import useStateObject from "../utils/useStateObject";
+import { capitalizeWords } from "../utils/capitalizeWords";
 
 async function createPerson(newData: UnIdentifiedPerson) {
   if (newData.birth == "null") {
@@ -41,39 +43,12 @@ export default function EditPeople({ session, insert }: any) {
   const navigate = useNavigate()
   const id = useParams<{ id: string }>()
 
-  const [person, setPerson] = useState<Person | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [databaseError, setDatabaseError] = useState<PostgrestError | null>(null)
   const [loading, setLoading] = useState(!insert)
   const [submitting, setSubmitting] = useState(false)
 
-  const [name, setName] = useState<string>("")
-  const [firstName, setFirstName] = useState<string | null>(null)
-  const [birth, setBirth] = useState<string | null>(null)
-  const [death, setDeath] = useState<string | null>(null)
-  const [birthPlace, setBirthPlace] = useState<string | null>(null)
-  const [deathPlace, setDeathPlace] = useState<string | null>(null)
-  const [deathCause, setDeathCause] = useState<string | null>(null)
-  const [residence, setResidence] = useState<string | null>(null)
-  const [comments, setComments] = useState<string>("")
-
-  const [bornAs, setBornAs] = useState<string | null>(null)
-  const [work, setWork] = useState<string | null>(null)
-  const [age, setAge] = useState<number | null>(null)
-  const [origin, setOrigin] = useState<string | null>(null)
-  const [graveNumber, setGraveNumber] = useState<string | null>(null)
-  const [religion, setReligion] = useState<string | null>(null)
-  const [insuranceDocNumber, setInsuranceDocNumber] = useState<number | null>(null)
-  const [deathRegisterNumber, setDeathRegisterNumber] = useState<string | null>(null)
-  const [stayTime, setStayTime] = useState<number | null>(null)
-  const [workStartBS, setWorkStartBS] = useState<string | null>(null)
-  const [deathTime, setDeathTime] = useState<Date | null>(null)
-  const [marriageStatus, setMarriageStatus] = useState<string | null>(null)
-  const [children, setChildren] = useState<number | null>(null)
-  const [burialDay, setBurialDay] = useState<string | null>(null)
-  const [exhumed, setExhumed] = useState(false)
-  const [exhumationDate, setExhumationDate] = useState<string | null>(null)
-  const [autoAdded, setAutoAdded] = useState<boolean>(false)
+  const [person, setPerson] = useStateObject<Person | null>(null)
 
   const { getDetailsProps } = useDetails({
     closeOnOutsideClick: false,
@@ -120,32 +95,6 @@ export default function EditPeople({ session, insert }: any) {
           }
           const person: Person = data![0]
           setPerson(person);
-          setName(person.name)
-          setFirstName(person.first_name)
-          setBirth(person.birth)
-          setDeath(person.death)
-          setBirthPlace(person.birth_place)
-          setDeathPlace(person.death_place)
-          setDeathCause(person.death_cause)
-          setResidence(person.residence)
-          setComments(person.comments)
-          setBornAs(person.born_as)
-          setWork(person.work)
-          setAge(person.age)
-          setOrigin(person.origin)
-          setGraveNumber(person.grave_number)
-          setReligion(person.religion)
-          setInsuranceDocNumber(person.insurance_doc_number)
-          setDeathRegisterNumber(person.death_register_number)
-          setStayTime(person.stay_time)
-          setWorkStartBS(person.work_start_bs)
-          setDeathTime(person.death_time)
-          setMarriageStatus(person.marriage_status)
-          setChildren(person.children)
-          setBurialDay(person.burial_day)
-          setExhumed(person.exhumed)
-          setExhumationDate(person.exhumation_date)
-          setAutoAdded(person.auto_added)
         } catch (error) {
           if (error instanceof Error) {
             setError(error.message);
@@ -170,7 +119,7 @@ export default function EditPeople({ session, insert }: any) {
           description={<Text>You do not have the required permissions for this action. Contact your admin.</Text>}
           variant="critical"
         />
-        <br/>
+        <br />
         <Button icon={ArrowLeftIcon} onClick={() => (navigate(-1))} />
       </>
     }
@@ -181,7 +130,7 @@ export default function EditPeople({ session, insert }: any) {
           description={<Text>You do not have the required permissions for this action. Contact your admin.</Text>}
           variant="critical"
         />
-        <br/>
+        <br />
         <Button icon={ArrowLeftIcon} onClick={() => (navigate(-1))} />
       </>
     }
@@ -228,225 +177,66 @@ export default function EditPeople({ session, insert }: any) {
       <Box as="form">
         <Stack>
           <FormControl>
-            {!insert && <>
-              <FormControl.Label>ID</FormControl.Label>
-              <TextInput monospace disabled value={person?.id} />
-              <FormControl.Caption>The ID cannot be changed.</FormControl.Caption>
-            </>}
+            <FormControl.Label>ID</FormControl.Label>
+            <TextInput disabled value={person ? person.id : ""} />
+            <FormControl.Caption>The ID cannot be changed.</FormControl.Caption>
           </FormControl>
-          <FormControl>
-            <FormControl.Label>Fist name</FormControl.Label>
-            {/* @ts-ignore */}
-            <TextInput value={firstName} onChange={(e) => { setFirstName(e.target.value); }} />
-          </FormControl>
-          <FormControl>
-            <FormControl.Label>Name</FormControl.Label>
-            {/* @ts-ignore */}
-            <TextInput required value={name} onChange={(e) => { setName(e.target.value); }} />
-          </FormControl>
+          {displayedPersonFields.map((field: string) => {
+            // Dynamically get the value from the person object based on field name
+            const fieldValue = person ? person[field as keyof Person] : null;
 
-          <FormControl>
-            <FormControl.Label>Birth</FormControl.Label>
-            {/* @ts-ignore */}
-            <TextInput value={birth} leadingVisual={CalendarIcon} onChange={(e) => { setBirth(e.target.value); }} />
-          </FormControl>
-
-          <FormControl>
-            <FormControl.Label>Death</FormControl.Label>
-            {/* @ts-ignore */}
-            <TextInput value={death} leadingVisual={CalendarIcon} onChange={(e) => { setDeath(e.target.value ? e.target.value : null); }} />
-          </FormControl>
-
-          <FormControl>
-            <FormControl.Label>Place of birth</FormControl.Label>
-            {/* @ts-ignore */}
-            <TextInput value={birthPlace} onChange={(e) => { setBirthPlace(e.target.value); }} />
-          </FormControl>
-
-          <FormControl>
-            <FormControl.Label>Place of death</FormControl.Label>
-            {/* @ts-ignore */}
-            <TextInput value={deathPlace} onChange={(e) => { setDeathPlace(e.target.value); }} />
-          </FormControl>
-
-          <FormControl>
-            <FormControl.Label>Cause of death</FormControl.Label>
-            {/* @ts-ignore */}
-            <TextInput value={deathCause} onChange={(e) => { setDeathCause(e.target.value); }} />
-          </FormControl>
-
-          <FormControl>
-            <FormControl.Label>Residence</FormControl.Label>
-            {/* @ts-ignore */}
-            <TextInput value={residence} onChange={(e) => { setResidence(e.target.value); }} />
-          </FormControl>
-
-          <FormControl>
-            <FormControl.Label>Comments</FormControl.Label>
-            {/* @ts-ignore */}
-            <Textarea value={comments} onChange={(e) => { setComments(e.target.value); }} />
-            <FormControl.Caption>For conflicting data, please create a conflict instead after creating this person.</FormControl.Caption>
-          </FormControl>
-
-          <Details {...getDetailsProps()}>
-            <Button leadingVisual={FoldIcon} as="summary" sx={{ mb: 3 }} >More</Button>
-            <Stack>
-              <FormControl>
-                <FormControl.Label>Born as</FormControl.Label>
-                {/* @ts-ignore */}
-                <TextInput value={bornAs} onChange={(e) => { alert(bornAs); setBornAs(e.target.value); }} />
+            if (typeof fieldValue === "boolean") {
+              return (
+                <FormControl disabled={ !fieldValue && field === "auto_added" } > {/* auto_added can't be enabled manually */}
+                  <FormControl.Label>{capitalizeWords(field.replaceAll("_", " "))}</FormControl.Label>
+                  <Checkbox checked={fieldValue} onChange={(e) => {
+                    setPerson({ [field as keyof Person]: e.target.checked })
+                  }
+                  } />
+                </FormControl>
+              );
+            }
+            return (
+              <FormControl key={field}>
+                <FormControl.Label>{capitalizeWords(field.replaceAll("_", " "))}</FormControl.Label>
+                <TextInput
+                  value={fieldValue as string}
+                  onChange={(e) =>
+                    setPerson({ [field as keyof Person]: e.target.value })
+                  }
+                />
               </FormControl>
-              <FormControl>
-                <FormControl.Label>Work</FormControl.Label>
-                {/* @ts-ignore */}
-                <TextInput value={work} onChange={(e) => { setWork(e.target.value); }} />
-              </FormControl>
-              <FormControl>
-                <FormControl.Label>Age</FormControl.Label>
-                {/* @ts-ignore */}
-                <TextInput type="number" leadingVisual={NumberIcon} value={age} onChange={(e) => { setAge(e.target.value); }} />
-              </FormControl>
-              <FormControl>
-                <FormControl.Label>Origin</FormControl.Label>
-                {/* @ts-ignore */}
-                <TextInput value={origin} onChange={(e) => { setOrigin(e.target.value); }} />
-              </FormControl>
-              <FormControl>
-                <FormControl.Label>Grave numver</FormControl.Label>
-                {/* @ts-ignore */}
-                <TextInput value={graveNumber} onChange={(e) => { setGraveNumber(e.target.value); }} />
-              </FormControl>
-              <FormControl>
-                <FormControl.Label>Religion</FormControl.Label>
-                {/* @ts-ignore */}
-                <TextInput value={religion} onChange={(e) => { setreligion(e.target.value); }} />
-              </FormControl>
-              <FormControl>
-                <FormControl.Label>Insurance doc number</FormControl.Label>
-                {/* @ts-ignore */}
-                <TextInput value={insuranceDocNumber} leadingVisual={NumberIcon} onChange={(e) => { setInsuranceDocNumber(e.target.value); }} />
-              </FormControl>
-              <FormControl>
-                <FormControl.Label>Death register number</FormControl.Label>
-                {/* @ts-ignore */}
-                <TextInput type="text" leadingVisual={NumberIcon} value={deathRegisterNumber} onChange={(e) => { setDeathRegisterNumber(e.target.value); }} />
-              </FormControl>
-              <FormControl>
-                <FormControl.Label>Time of stay (days)</FormControl.Label>
-                {/* @ts-ignore */}
-                <TextInput type="number" leadingVisual={NumberIcon} value={stayTime} onChange={(e) => { setStayTime(e.target.value); }} />
-              </FormControl>
-              <FormControl>
-                <FormControl.Label>Start of work in Braunschweig</FormControl.Label>
-                {/* @ts-ignore */}
-                <TextInput value={workStartBS} leadingVisual={CalendarIcon} onChange={(e) => { setWorkStartBS(e.target.value); }} />
-              </FormControl>
-              <FormControl>
-                <FormControl.Label>Time of death</FormControl.Label>
-                {/* @ts-ignore */}
-                <TextInput type="time" leadingVisual={ClockIcon} value={deathTime} onChange={(e) => { setDeathTime(e.target.value); }} />
-              </FormControl>
-              <FormControl>
-                <FormControl.Label>Marriage status</FormControl.Label>
-                {/* @ts-ignore */}
-                <TextInput value={marriageStatus} onChange={(e) => { setMarriageStatus(e.target.value); }} />
-              </FormControl>
-              <FormControl>
-                <FormControl.Label>Number of children</FormControl.Label>
-                {/* @ts-ignore */}
-                <TextInput type="number" value={children} leadingVisual={NumberIcon} onChange={(e) => { setChildren(e.target.value); }} />
-              </FormControl>
-              <FormControl>
-                <FormControl.Label>Day of burial</FormControl.Label>
-                {/* @ts-ignore */}
-                <TextInput value={burialDay} leadingVisual={CalendarIcon} onChange={(e) => { setBurialDay(e.target.value); }} />
-              </FormControl>
-              <FormControl>
-                <FormControl.Label>Exhumation date</FormControl.Label>
-                {/* @ts-ignore */}
-                <TextInput value={exhumationDate} leadingVisual={CalendarIcon} onChange={(e) => { setExhumationDate(e.target.value); }} />
-              </FormControl>
-
-              <FormControl>
-                <FormControl.Label>Exhumed</FormControl.Label>
-                {/* @ts-ignore */}
-                <Checkbox checked={exhumed} onChange={ (e) => setExhumed(e.target.checked) } />
-              </FormControl>
-              <FormControl>
-                <FormControl.Label>Auto-added</FormControl.Label>
-                {/* @ts-ignore */}
-                <Checkbox checked={autoAdded} onChange={ (e) => setAutoAdded(e.target.checked) } />
-                <FormControl.Caption>Whether the person was created by an automation. This shouldn't be activated this way.</FormControl.Caption>
-              </FormControl>
-            </Stack>
-          </Details>
+            );
+          })}
 
           <FormControl>
             {insert ? <Button variant="primary" loading={submitting} disabled={submitting} onClick={() => {
-              const a = createPerson({
-                state: "open",
-                name: name, first_name: firstName, birth: String(birth), hidden: true, death: String(death), birth_place: birthPlace, death_place: deathPlace,
-                death_cause: deathCause, residence: residence, comments: comments,
-                born_as: bornAs,
-                work: work,
-                age: age,
-                origin: origin,
-                grave_number: graveNumber,
-                religion: religion,
-                insurance_doc_number: insuranceDocNumber,
-                death_register_number: deathRegisterNumber,
-                stay_time: stayTime,
-                work_start_bs: workStartBS,
-                death_time: deathTime,
-                marriage_status: marriageStatus,
-                children: children,
-                burial_day: burialDay,
-                exhumed: exhumed,
-                exhumation_date: exhumationDate,
-                auto_added: autoAdded
-              })
-              a.then((response) => {
-                if (response) {
-                  setDatabaseError(response.error)
-                }
-              })
-              setSubmitting(true)
-              setTimeout(() => {
-                navigate("/people")
-              }, 1000)
-            }}>Create</Button> :
-              <Button variant="primary" loading={submitting} disabled={submitting} onClick={() => {
-                const a = editPerson({
-                  state: person!.state,
-                  name: name, first_name: firstName, birth: String(birth), hidden: true, death: String(death), birth_place: birthPlace, death_place: deathPlace,
-                  death_cause: deathCause, residence: residence, comments: comments,
-                  born_as: bornAs,
-                  work: work,
-                  age: age,
-                  origin: origin,
-                  grave_number: graveNumber,
-                  religion: religion,
-                  insurance_doc_number: insuranceDocNumber,
-                  death_register_number: deathRegisterNumber,
-                  stay_time: stayTime,
-                  work_start_bs: workStartBS,
-                  death_time: deathTime,
-                  marriage_status: marriageStatus,
-                  children: children,
-                  burial_day: burialDay,
-                  exhumed: exhumed,
-                  exhumation_date: exhumationDate,
-                  auto_added: autoAdded
-                }, id.id!)
+              if (person) {
+                const a = createPerson(person)
                 a.then((response) => {
-                  if (response.error) {
+                  if (response) {
                     setDatabaseError(response.error)
                   }
                 })
                 setSubmitting(true)
                 setTimeout(() => {
-                  window.location.href = `/people/${id.id}`
+                  navigate("/people")
                 }, 1000)
+              }
+            }}>Create</Button> :
+              <Button variant="primary" loading={submitting} disabled={submitting} onClick={() => {
+                if (person) {
+                  const a = editPerson(person, id.id!)
+                  a.then((response) => {
+                    if (response.error) {
+                      setDatabaseError(response.error)
+                    }
+                  })
+                  setSubmitting(true)
+                  setTimeout(() => {
+                    window.location.href = `/people/${id.id}`
+                  }, 1000)
+                }
               }}>Update</Button>
             }
           </FormControl>

@@ -195,7 +195,9 @@ export const displayedPersonFields = [
   "children",
   "burial_day",
   "exhumation_date",
-  "comments"
+  "comments",
+  "exhumed",
+  "auto_added"
 ]
 
 export interface Link {
