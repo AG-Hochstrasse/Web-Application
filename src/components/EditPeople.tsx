@@ -127,7 +127,7 @@ export default function EditPeople({ session, insert }: any) {
       return <>
         <Banner
           title="You are not allowed to write public people"
-          description={<Text>You do not have the required permissions for this action. Contact your admin.</Text>}
+          description={<Text>You do not have the required permissions for this action. If you think this is an error, please contact your admin.</Text>}
           variant="critical"
         />
         <br />
@@ -196,6 +196,21 @@ export default function EditPeople({ session, insert }: any) {
                 </FormControl>
               );
             }
+            if (field === "comments") return (
+              // Textarea for comments
+              <FormControl key={field}>
+                <FormControl.Label>{capitalizeWords(field.replaceAll("_", " "))}</FormControl.Label>
+                <Textarea
+                  value={fieldValue as string}
+                  onChange={(e) =>
+                    setPerson({ [field as keyof Person]: e.target.value })
+                  }
+                  rows={10}
+                  cols={75}
+                  placeholder="Enter comments here"
+                />
+              </FormControl>
+            )
             return (
               <FormControl key={field}>
                 <FormControl.Label>{capitalizeWords(field.replaceAll("_", " "))}</FormControl.Label>
