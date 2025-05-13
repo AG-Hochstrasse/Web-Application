@@ -11,6 +11,7 @@ import { Conflict, User } from '../Interfaces';
 import PersonConflictList from './PersonConflictList';
 import { PostgrestError } from '@supabase/supabase-js'
 import PersonLinkList from './PersonLinkList';
+import PersonFiles from '../pages/PersonFiles';
 
 export async function updatePersonState(to: string, id: number) {
   const { data, error } = await supabase
@@ -151,6 +152,8 @@ export default function PersonDetail({ session }: any) {
         return <PersonConflictList conflicts={conflicts.filter((conflict) => conflict.type != "confirmed")} confirmed={false} /* TODO: this is not beautiful. Set default value */ personId={+id!}/>
       case "confirmed":
         return <PersonConflictList conflicts={conflicts.filter((conflict) => conflict.type == "confirmed")} confirmed personId={+id!}/>
+      case "photos":
+        return <PersonFiles id={person.id} />
       default:
         return <Navigate to="/not-found" />
     }
