@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import uploadFile from "../utils/uploadFile";
 import listFiles from "../utils/listFiles";
-import { Text } from "@primer/react";
+import { Box, Button, Spinner, Stack, Text } from "@primer/react";
 import FileList, { FileObj } from "../components/files/FileList";
 
 export default function PersonFiles({ id }: { id: string }) {
   const [result, setResult] = useState<{ id: string, fullPath: string } | null>()
   const [error, setError] = useState<string | null>(null)
   const [files, setFiles] = useState<FileObj[]>([])
+
+  const [uploading, setUploading] = useState(false)
 
   const update = async () => {
     const files = await listFiles("people", id)
@@ -27,7 +29,9 @@ export default function PersonFiles({ id }: { id: string }) {
   }, [result])
 
   async function handleFile(file: File) {
+    setUploading(true)
     setResult(await uploadFile("people", `${id}/${file.name}`, file))
+    setUploading(false)
   }
 
   function dropHandler(ev: React.DragEvent) {
@@ -77,12 +81,16 @@ export default function PersonFiles({ id }: { id: string }) {
           multiple
           style={{ display: "none" }}
           id="fileInput"
+          disabled={uploading}
         />
         <label htmlFor="fileInput" style={{ cursor: "pointer" }}>
-          Select Files
-        </label>
+            <Button as="span" loading={uploading} disabled={uploading}>
+              Select Files
+            </Button>
+          </label>
       </div>
-      <FileList files={files.map(f => ({ ...f, fullPath: `${id}/${f.name}` }))} update={update} />
+      <br />
+      <FileList files={files.map(f => ({ ...f, fullPath: `${id}/${f.name}` }))} update={update} fileLink="/files/people"/>
     </>
   );
 }
