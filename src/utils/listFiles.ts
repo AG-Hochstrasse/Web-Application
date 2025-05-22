@@ -14,6 +14,7 @@ export default async function listFiles(bucketName: string, path: string) {
 
   if (error) {
     console.error('Error listing files:', error);
+    throw new Error(error.message)
     return null;
   }
 

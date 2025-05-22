@@ -4,7 +4,7 @@ import { supabase } from '../services/supabaseClient';
 import { useState, useEffect, useRef } from 'react';
 
 import { StateLabel, Box, PageHeader, RelativeTime, Button, Label, Dialog, Text, TabNav, IconButton, Stack, CounterLabel, ButtonGroup, ActionMenu, ActionList } from '@primer/react';
-import { NoteIcon, AlertIcon, PeopleIcon, CommentDiscussionIcon, ArrowLeftIcon, CheckCircleIcon, IssueClosedIcon, IssueTrackedByIcon, IssueReopenedIcon, LinkIcon } from '@primer/octicons-react';
+import { NoteIcon, AlertIcon, CommentDiscussionIcon, ArrowLeftIcon, CheckCircleIcon, IssueClosedIcon, IssueTrackedByIcon, IssueReopenedIcon, LinkIcon, FileIcon } from '@primer/octicons-react';
 import { SkeletonText, Banner } from '@primer/react/drafts';
 import PersonDetailInfo from './PersonDetailInfo';
 import { Conflict, User } from '../Interfaces';
@@ -12,6 +12,8 @@ import PersonConflictList from './PersonConflictList';
 import { PostgrestError } from '@supabase/supabase-js'
 import PersonLinkList from './PersonLinkList';
 import PersonFiles from '../pages/PersonFiles';
+import listFiles from '../utils/listFiles';
+import { useFiles } from '../hooks/useFiles';
 
 export async function updatePersonState(to: string, id: number) {
   const { data, error } = await supabase
@@ -32,7 +34,7 @@ export async function updatePersonHidden(to: boolean, id: number) {
 }
 
 export default function PersonDetail({ session }: any) {
-  const { id, tab } = useParams<{ id: string, tab?: "details" | "discussion" | "photos" | "conflicts" | "confirmed" | "links" }>();
+  const { id, tab } = useParams<{ id: string, tab?: "details" | "discussion" | "files" | "conflicts" | "confirmed" | "links" }>();
 
   const [person, setPerson] = useState<any>([]);
   const [conflicts, setConflicts] = useState<Conflict[]>([])
@@ -44,13 +46,15 @@ export default function PersonDetail({ session }: any) {
   const [isOpen, setIsOpen] = useState(false)
   const returnFocusRef = useRef(null)
 
-  const [selectedTab, setSelectedTab] = useState<"details" | "discussion" | "photos" | "conflicts" | "confirmed" | "links">(tab ?? 'details');
+  const [selectedTab, setSelectedTab] = useState<"details" | "discussion" | "files" | "conflicts" | "confirmed" | "links">(tab ?? 'details');
 
   const [retrigger, setRetrigger] = useState(false)
 
   const navigate = useNavigate();
 
   const location = useLocation();
+
+  const { files } = useFiles("people", id ?? "_")
 
   //fetch user
   useEffect(() => {
@@ -152,7 +156,7 @@ export default function PersonDetail({ session }: any) {
         return <PersonConflictList conflicts={conflicts.filter((conflict) => conflict.type != "confirmed")} confirmed={false} /* TODO: this is not beautiful. Set default value */ personId={+id!}/>
       case "confirmed":
         return <PersonConflictList conflicts={conflicts.filter((conflict) => conflict.type == "confirmed")} confirmed personId={+id!}/>
-      case "photos":
+      case "files":
         return <PersonFiles id={person.id} />
       default:
         return <Navigate to="/not-found" />
@@ -254,8 +258,8 @@ export default function PersonDetail({ session }: any) {
             <TabNav.Link selected={selectedTab === 'discussion'} onClick={() => setSelectedTab('discussion')}>
               <CommentDiscussionIcon size={16} /> <Text ml={1}>Discussion</Text>
             </TabNav.Link>
-            <TabNav.Link selected={selectedTab === 'photos'} onClick={() => setSelectedTab('photos')}>
-              <PeopleIcon size={16} /> <Text ml={1}>Photos</Text>
+            <TabNav.Link selected={selectedTab === 'files'} onClick={() => setSelectedTab('files')}>
+              <FileIcon size={16} /> <Text ml={1}>Files</Text> {files.length > 0 && <CounterLabel>{files.length}</CounterLabel>}
             </TabNav.Link>
             <TabNav.Link selected={selectedTab === 'conflicts'} onClick={() => setSelectedTab('conflicts')}>
               <AlertIcon /> <Text ml={1}>Conflicts {conflicts.filter((conflict) => conflict.open ).length > 0 && <CounterLabel>{conflicts.filter((conflict) => conflict.open && conflict.type != "confirmed").length /* don't need to filter by type because 'confirmed's are always closed */}</CounterLabel>}</Text>
