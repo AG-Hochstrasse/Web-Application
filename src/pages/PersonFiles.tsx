@@ -3,15 +3,49 @@ import uploadFile from "../utils/uploadFile";
 import listFiles from "../utils/listFiles";
 import { Box, Button, Spinner, Stack, Text } from "@primer/react";
 import FileList, { FileObj } from "../components/files/FileList";
+import JSZip from "jszip";
+import { supabase } from "../services/supabaseClient";
 
+/**
+ * Downloads a directory from Supabase Storage as a zip file.
+ * @param bucketName The name of the bucket.
+ * @param dirPath The path to the directory (with trailing slash).
+ * @param zipName The name for the downloaded zip file.
+ */
+export async function downloadDirectoryAsZip(bucketName: string, dirPath: string, zipName: string = "files.zip") {
+  const { data: files, error } = await supabase.storage.from(bucketName).list(dirPath, { limit: 1000 });
+  if (error) throw error;
+
+  const zip = new JSZip();
+
+  for (const file of files ?? []) {
+    if (file.name && !file.metadata?.mimetype?.endsWith("directory")) {
+      const filePath = `${dirPath}${file.name}`;
+      const { data, error: downloadError } = await supabase.storage.from(bucketName).download(filePath);
+      if (downloadError || !data) continue;
+      zip.file(file.name, data);
+    }
+  }
+
+  const blob = await zip.generateAsync({ type: "blob" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = zipName;
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
 export default function PersonFiles({ id }: { id: string }) {
   const [result, setResult] = useState<{ id: string, fullPath: string } | null>()
   const [error, setError] = useState<string | null>(null)
   const [files, setFiles] = useState<FileObj[]>([])
 
   const [uploading, setUploading] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   const update = async () => {
+    setLoading(true)
     const files = await listFiles("people", id)
 
     if (files) {
@@ -22,6 +56,7 @@ export default function PersonFiles({ id }: { id: string }) {
       setFiles([])
       setError("Error loading files")
     }
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -62,6 +97,15 @@ export default function PersonFiles({ id }: { id: string }) {
     }
   }
 
+  if (loading) {
+    return (
+      <Stack direction="horizontal" align="center">
+        <Spinner />
+        <Text>Loading...</Text>
+      </Stack>
+    );
+  }
+  
   return (
     <>
       <div
@@ -84,13 +128,18 @@ export default function PersonFiles({ id }: { id: string }) {
           disabled={uploading}
         />
         <label htmlFor="fileInput" style={{ cursor: "pointer" }}>
-            <Button as="span" loading={uploading} disabled={uploading}>
-              Select Files
-            </Button>
-          </label>
+          <Button as="span" loading={uploading} disabled={uploading}>
+            Select Files
+          </Button>
+        </label>
       </div>
       <br />
-      <FileList files={files.map(f => ({ ...f, fullPath: `${id}/${f.name}` }))} update={update} fileLink="/files/people"/>
+      <FileList
+        files={files.map(f => ({ ...f, fullPath: `${id}/${f.name}` }))}
+        title={`${files.length} files`}
+        update={update}
+        downloadAll={() => downloadDirectoryAsZip("people", `${id}/`, `${id}.zip`)}
+      />
     </>
   );
 }

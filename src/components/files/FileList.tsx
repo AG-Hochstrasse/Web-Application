@@ -1,13 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { Banner, DataTable, Dialog, Table } from "@primer/react/experimental";
-import { Text, Link as URLLink, RelativeTime, Link, Box, IconButton, Button, TextInput, Spinner } from "@primer/react";
-import { DownloadIcon, PencilIcon, TrashIcon } from "@primer/octicons-react";
+import { Text, RelativeTime, Link, Box, IconButton, Button, TextInput, FormControl } from "@primer/react";
+import { DownloadIcon, FileZipIcon, PencilIcon, TrashIcon } from "@primer/octicons-react";
 import { deleteFileOrFolder } from "../../utils/deleteFileOrFolder";
-import { rename } from "fs";
 import { moveFile } from "../../utils/moveFile";
 import { getFileAsDataUrl } from "../../utils/getFile";
-import { Link as RouterLink } from "react-router-dom";
-import { get } from "http";
 import { supabase } from "../../services/supabaseClient";
 
 export interface FileObj {
@@ -24,19 +21,20 @@ export interface LocatedFileObj extends FileObj {
   fullPath: string
 }
 
-export default function FileList({ files, update, fileLink }: { files: LocatedFileObj[], update?: () => void, fileLink: string }) {
-  const [isDeletionDialogOpen, setIsDeletionDialogOpen] = React.useState(false)
+export default function FileList({ files, title, update, downloadAll, ariaId }: { files: LocatedFileObj[], title?: string, update?: () => void, downloadAll?: () => Promise<void>, ariaId?: string }) {
+  const [isDeletionDialogOpen, setIsDeletionDialogOpen] = useState(false)
   const deleteButtonRef = React.useRef<HTMLButtonElement>(null)
 
-  const [isRenameDialogOpen, setIsRenameDialogOpen] = React.useState(false)
+  const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false)
   const renameButtonRef = React.useRef<HTMLButtonElement>(null)
   const onDialogClose = React.useCallback(() => setIsDeletionDialogOpen(false), [])
-  const [newFileName, setNewFileName] = React.useState<string>("")
+  const [newFileName, setNewFileName] = useState<string>("")
 
-  const [selectedFile, setSelectedFile] = React.useState<LocatedFileObj | null>(null)
+  const [selectedFile, setSelectedFile] = useState<LocatedFileObj | null>(null)
 
-  const [error, setError] = React.useState<string | null>(null)
-  const [downloading, setDownloading] = React.useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [downloading, setDownloading] = useState(false)
+  const [downloadingAll, setDownloadingAll] = useState(false)
 
   if (!files || files.length === 0) {
     return <Text>No files available.</Text>;
@@ -59,6 +57,16 @@ export default function FileList({ files, update, fileLink }: { files: LocatedFi
         <Text>{error}</Text>
       </Banner>}
       <Table.Container>
+        {title && <Table.Title id={ariaId ?? "files"}>{title}</Table.Title>}
+        <Table.Actions>
+          {downloadAll && <IconButton
+            aria-label="Download all files as zip"
+            icon={FileZipIcon}
+            variant="invisible"
+            onClick={async () => { setDownloadingAll(true); await downloadAll(); setDownloadingAll(false) }}
+            loading={downloadingAll}
+          />}
+        </Table.Actions>
         <DataTable
           aria-labelledby="files"
           aria-describedby="uploaded files"
@@ -155,15 +163,20 @@ export default function FileList({ files, update, fileLink }: { files: LocatedFi
       </Dialog>}
       {isRenameDialogOpen && selectedFile && <Dialog title="Rename file" onClose={() => setIsRenameDialogOpen(false)} returnFocusRef={renameButtonRef}>
         <p>Enter the new name for <b>{selectedFile.name}</b>:</p>
-        <TextInput
-          placeholder="New name"
-          onChange={(e) => {
-            setNewFileName(e.target.value)
-          }}
-          sx={{ mb: 3 }}
-        />
+        <FormControl sx={{ mb: 3 }}>
+          <TextInput
+            placeholder="New name"
+            onChange={(e) => {
+              setNewFileName(e.target.value)
+            }}
+            validationStatus={/[\\\/:*?"<>|]/.test(newFileName) ? "error" : undefined}
+          />
+          {/[\\\/:*?"<>|]/.test(newFileName) && <FormControl.Validation variant="error">
+            The new name may not contain any of the following characters: \ / : * ? " {"< >"} |
+          </FormControl.Validation>}
+        </FormControl>
         <Dialog.Footer>
-          <Button variant="primary" onClick={async () => {
+          <Button variant="primary" disabled={newFileName === selectedFile.name || newFileName === "" || /[\\\/:*?"<>|]/.test(newFileName)} onClick={async () => {
             try {
               if (await moveFile("people", selectedFile.fullPath, selectedFile.fullPath.replace(selectedFile.name, newFileName))) {
                 setError(null)
