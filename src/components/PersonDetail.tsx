@@ -282,12 +282,10 @@ export default function PersonDetail({ session }: any) {
       <Dialog returnFocusRef={returnFocusRef} isOpen={isOpen} onDismiss={() => setIsOpen(false)} aria-labelledby="header" >
         <div data-testid="inner">
           {/* @ts-ignore */}
-          <Dialog.Header id="header">{person.state == "open" ? "Close" : "Reopen"} or {person.hidden ? "publish" : "unpublish"} person</Dialog.Header>
+          <Dialog.Header id="header">{person.state == "open" ? "Mark as completed" : "Reopen"} or {person.hidden ? "publish" : "unpublish"} person</Dialog.Header>
           <Box p={3}>
             <Text>
               Publishing a person makes it visible in generated documents using this database and for all visitors of this website (future).
-              <br /><br />
-              Closing a person marks it as done and complete. Only close a person when it's completeley done and all fields are confirmed.
             </Text>
           </Box>
           <Box p={3} borderTop="1px solid" borderColor="border.default">
@@ -300,7 +298,7 @@ export default function PersonDetail({ session }: any) {
                 setError(error)
                 setIsOpen(false)
                 setRetrigger(!retrigger)
-              }}>{person.state == "open" ? "Close" : "Reopen"} person</Button>}
+              }}>{person.state == "open" ? "Mark as completed" : "Reopen"}</Button>}
               {person.state != "canceled" && 
               <Button sx={{mb: 2}} block onClick={
                 () => {
@@ -312,7 +310,7 @@ export default function PersonDetail({ session }: any) {
                 setIsOpen(false)
                 setRetrigger(!retrigger)
                 }
-              }>Close as not planned</Button>}
+              }>Mark as cancelled</Button>}
               <Button block onClick={
                 () => {
                   const a = updatePersonHidden(!person.hidden, person.id)
