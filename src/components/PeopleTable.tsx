@@ -118,7 +118,7 @@ export default function PeopleTable({ all }: any) {
               )
             },
             {
-              header: 'Created',
+              header: 'Added',
               field: 'created_at',
               renderCell: (row: Person) => (
                 <Link as={RouterLink} to={`/people/${row.id}`} sx={{ color: 'unset' }}>
