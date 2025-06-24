@@ -61,7 +61,7 @@ export default function AppHome(props: any) {
         Click on the <Octicon icon={ThreeBarsIcon} /> icon in the top left corner to open the sidebar and select <b><Octicon icon={FileIcon} /> Files</b> to access the Files page.
       </Text>
     } secondaryAction={
-      <Banner.SecondaryAction onClick={() => navigate("/files")}>Learn more</Banner.SecondaryAction>
+      <Banner.SecondaryAction onClick={() => navigate("/files")}>Go to Files</Banner.SecondaryAction>
     } variant="info" />
     <WhatsNew />
     
