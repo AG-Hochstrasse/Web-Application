@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from "react";
-import uploadFile from "../utils/uploadFile";
-import listFiles from "../utils/listFiles";
-import { Box, Button, Spinner, Stack, Text } from "@primer/react";
-import FileList, { FileObj } from "../components/files/FileList";
+import uploadFile from "../../utils/uploadFile";
+import listFiles from "../../utils/listFiles";
+import { Button, Heading, PageLayout, Spinner, Stack, Text } from "@primer/react";
+import FileList, { FileObj } from "../../components/files/FileList";
 import JSZip from "jszip";
-import { supabase } from "../services/supabaseClient";
+import { supabase } from "../../services/supabaseClient";
 
 /**
  * Downloads a directory from Supabase Storage as a zip file.
- * @param bucketName The name of the bucket.
- * @param dirPath The path to the directory (with trailing slash).
- * @param zipName The name for the downloaded zip file.
  */
 export async function downloadDirectoryAsZip(bucketName: string, dirPath: string, zipName: string = "files.zip") {
   const { data: files, error } = await supabase.storage.from(bucketName).list(dirPath, { limit: 1000 });
@@ -36,18 +33,25 @@ export async function downloadDirectoryAsZip(bucketName: string, dirPath: string
   a.click();
   a.remove();
 }
-export default function PersonFiles({ id }: { id: string }) {
+
+interface DirectoryListProps {
+  bucketName: string;
+  path?: string;
+}
+
+export default function DirectoryList({ bucketName, path }: DirectoryListProps) {
+  // Remove all leading and trailing slashes
+  const dirPath = path ? path.replace(/^\/+|\/+$/g, "") : "";
+  
   const [result, setResult] = useState<{ id: string, fullPath: string } | null>()
   const [error, setError] = useState<string | null>(null)
   const [files, setFiles] = useState<FileObj[]>([])
-
   const [uploading, setUploading] = useState(false)
   const [loading, setLoading] = useState(true)
 
   const update = async () => {
     setLoading(true)
-    const files = await listFiles("people", id)
-
+    const files = await listFiles(bucketName, dirPath)
     if (files) {
       setFiles(files)
       setError(null)
@@ -61,19 +65,18 @@ export default function PersonFiles({ id }: { id: string }) {
 
   useEffect(() => {
     update()
-  }, [result])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [result, bucketName, dirPath])
 
   async function handleFile(file: File) {
     setUploading(true)
-    setResult(await uploadFile("people", `${id}/${file.name}`, file))
+    setResult(await uploadFile(bucketName, `${dirPath}/${file.name}`, file))
     setUploading(false)
   }
 
   function dropHandler(ev: React.DragEvent) {
     ev.preventDefault();
-
     if (ev.dataTransfer.items) {
-      // Use DataTransferItemList interface to access the file(s)
       Array.from(ev.dataTransfer.items).forEach((item) => {
         if (item.kind === "file") {
           const file = item.getAsFile();
@@ -81,7 +84,6 @@ export default function PersonFiles({ id }: { id: string }) {
         }
       });
     } else {
-      // Use DataTransfer interface to access the file(s)
       Array.from(ev.dataTransfer.files).forEach((file) => {
         handleFile(file);
       });
@@ -105,12 +107,12 @@ export default function PersonFiles({ id }: { id: string }) {
       </Stack>
     );
   }
-  
+
   return (
     <>
       <div
         onDrop={dropHandler}
-        onDragOver={(ev) => ev.preventDefault()} // Prevent default to allow drop
+        onDragOver={(ev) => ev.preventDefault()}
         style={{
           border: "2px dashed #ccc",
           padding: "20px",
@@ -135,10 +137,11 @@ export default function PersonFiles({ id }: { id: string }) {
       </div>
       <br />
       <FileList
-        files={files.map(f => ({ ...f, fullPath: `${id}/${f.name}` }))}
+        bucket={bucketName}
+        files={files.map(f => ({ ...f, fullPath: `${dirPath}/${f.name}`.replace(/^\/+|\/+$/g, "") }))}
         title={`${files.length} files`}
         update={update}
-        downloadAll={() => downloadDirectoryAsZip("people", `${id}/`, `${id}.zip`)}
+        downloadAll={() => downloadDirectoryAsZip(bucketName, dirPath, "files.zip")}
       />
     </>
   );

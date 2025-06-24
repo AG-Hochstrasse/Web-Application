@@ -21,7 +21,7 @@ export interface LocatedFileObj extends FileObj {
   fullPath: string
 }
 
-export default function FileList({ files, title, update, downloadAll, ariaId }: { files: LocatedFileObj[], title?: string, update?: () => void, downloadAll?: () => Promise<void>, ariaId?: string }) {
+export default function FileList({ bucket, files, title, update, downloadAll, ariaId }: { bucket: string, files: LocatedFileObj[], title?: string, update?: () => void, downloadAll?: () => Promise<void>, ariaId?: string }) {
   const [isDeletionDialogOpen, setIsDeletionDialogOpen] = useState(false)
   const deleteButtonRef = React.useRef<HTMLButtonElement>(null)
 
@@ -80,7 +80,7 @@ export default function FileList({ files, title, update, downloadAll, ariaId }: 
                 <Link
                   onClick={async (e) => {
                     e.preventDefault();
-                    const { data, error } = await supabase.storage.from("people").createSignedUrl(file.fullPath, 60); // 60 seconds
+                    const { data, error } = await supabase.storage.from(bucket).createSignedUrl(file.fullPath, 60); // 60 seconds
                     if (error) {
                       setError(String(error));
                       return;
@@ -110,11 +110,16 @@ export default function FileList({ files, title, update, downloadAll, ariaId }: 
               renderCell: row => {
                 return <>
                   <IconButton
-                    loading={downloading}
+                    loading={selectedFile === row && downloading}
                     aria-label={`Download: ${row.name}`}
                     icon={DownloadIcon}
                     variant="invisible"
-                    onClick={async () => { setDownloading(true); downloadDataUrl(await getFileAsDataUrl("people", row.fullPath), row.name); setDownloading(false) }}
+                    onClick={async () => {
+                      setSelectedFile(row)
+                      setDownloading(true)
+                      downloadDataUrl(await getFileAsDataUrl(bucket, row.fullPath), row.name)
+                      setDownloading(false)
+                    }}
                   />
                   <IconButton
                     ref={deleteButtonRef}
@@ -145,7 +150,7 @@ export default function FileList({ files, title, update, downloadAll, ariaId }: 
         <Dialog.Footer p={-3}>
           <Button variant="danger" onClick={async () => {
             try {
-              if (await deleteFileOrFolder("people", selectedFile.fullPath)) {
+              if (await deleteFileOrFolder(bucket, selectedFile.fullPath)) {
                 setError(null)
                 update?.()
               }
@@ -178,7 +183,7 @@ export default function FileList({ files, title, update, downloadAll, ariaId }: 
         <Dialog.Footer>
           <Button variant="primary" disabled={newFileName === selectedFile.name || newFileName === "" || /[\\\/:*?"<>|]/.test(newFileName)} onClick={async () => {
             try {
-              if (await moveFile("people", selectedFile.fullPath, selectedFile.fullPath.replace(selectedFile.name, newFileName))) {
+              if (await moveFile(bucket, selectedFile.fullPath, selectedFile.fullPath.replace(selectedFile.name, newFileName))) {
                 setError(null)
                 update?.()
               }

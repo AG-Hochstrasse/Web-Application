@@ -7,8 +7,7 @@ export default async function uploadFile(bucketName: string, filePath: string, f
     .upload(filePath, file);
 
   if (error) {
-
-    alert('Error uploading file:'+error.message);
+    alert('Error uploading file: '+error.message)
     return null;
   }
 

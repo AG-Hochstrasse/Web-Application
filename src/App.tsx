@@ -1,8 +1,6 @@
-import React, { useEffect, useState, createContext } from 'react';
-import logo from './logo.svg';
+import { useEffect, useState } from 'react';
 import './App.css';
 
-import { useContext } from 'react';
 import AppHeader from './components/AppHeader';
 import AppHome from './components/AppHome';
 import AppAbout from './components/AppAbout';
@@ -13,7 +11,6 @@ import EditPeople from './components/EditPeople';
 import NotFound from './components/NotFound';
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Link as RouterLink, Navigate } from 'react-router-dom';
 import { ThemeProvider, Box, Spinner, Stack, Text } from '@primer/react'
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { Auth } from '@supabase/auth-ui-react';
@@ -21,7 +18,7 @@ import { supabase } from './services/supabaseClient';
 import WhatsNew from './components/WhatsNew';
 import ConflictDetail from './components/ConflictDetail';
 import CreateConflict from './components/CreateConflict';
-import Playground from './components/AppPage';
+import DirectoryPage from './pages/DirectoryPage';
 
 export function App() {
   const [loading, setLoading] = useState(true);
@@ -98,6 +95,7 @@ export function App() {
             <Route path="/about" element={<AppAbout />} />
             <Route path="/whatsnew" element={<WhatsNew all />} />
             <Route path="/account" element={<AppAccount session={session} />} />
+            <Route path="/files" element={<DirectoryPage bucketName="files" />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Box>

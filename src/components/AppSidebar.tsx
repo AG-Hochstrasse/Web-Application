@@ -1,4 +1,4 @@
-import { BookIcon, HomeIcon, InfoIcon, LinkExternalIcon, MarkGithubIcon, NorthStarIcon, PeopleIcon, StarIcon, ThreeBarsIcon, XIcon } from "@primer/octicons-react"
+import { BookIcon, HomeIcon, InfoIcon, LinkExternalIcon, MarkGithubIcon, NorthStarIcon, PeopleIcon, StarIcon, ThreeBarsIcon, XIcon, FileIcon } from "@primer/octicons-react"
 import { ActionList, AnchoredOverlay, Box, Button, Header, IconButton, NavList, Overlay } from "@primer/react"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
@@ -46,6 +46,9 @@ export default function AppSidebar() {
             </NavList.Item>
             <NavList.Item onClick={() => navigate('/people')}>
               <NavList.LeadingVisual><PeopleIcon /></NavList.LeadingVisual> People
+            </NavList.Item>
+            <NavList.Item onClick={() => navigate('/files')}>
+              <NavList.LeadingVisual><FileIcon /></NavList.LeadingVisual> Files
             </NavList.Item>
             <NavList.Item onClick={() => navigate('/whatsnew')}>
               <NavList.LeadingVisual><NorthStarIcon /></NavList.LeadingVisual> Updates

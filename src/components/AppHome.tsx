@@ -1,6 +1,6 @@
 import { Stack, Heading, Text, Spinner, Box, Octicon, Link } from '@primer/react'
-import { ThreeBarsIcon, FileMediaIcon } from '@primer/octicons-react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ThreeBarsIcon, FileMediaIcon, FileIcon } from '@primer/octicons-react'
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { Link as RouterLink } from 'react-router-dom';
 import PeopleTable from './PeopleTable';
 import WhatsNew from './WhatsNew';
@@ -11,6 +11,8 @@ import { Banner } from '@primer/react/drafts';
 import Progress from './Progress';
 
 export default function AppHome(props: any) {
+  const navigate = useNavigate()
+  
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -52,7 +54,15 @@ export default function AppHome(props: any) {
         Click on your Avatar in the top right corner of this page. You can set a display name there.<br/>
         <Link as={RouterLink} to="/account">Let's see</Link>
       </Text>
-    } variant="upsell" />}
+    } variant="info" />}
+
+    <Banner title="You can now upload files in the Files page!" description={
+      <Text>
+        Click on the <Octicon icon={ThreeBarsIcon} /> icon in the top left corner to open the sidebar and select <b><Octicon icon={FileIcon} /> Files</b> to access the Files page.
+      </Text>
+    } secondaryAction={
+      <Banner.SecondaryAction onClick={() => navigate("/files")}>Learn more</Banner.SecondaryAction>
+    } variant="info" />
     <WhatsNew />
     
     <Progress />

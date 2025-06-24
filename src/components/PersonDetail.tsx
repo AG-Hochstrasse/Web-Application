@@ -11,9 +11,9 @@ import { Conflict, User } from '../Interfaces';
 import PersonConflictList from './PersonConflictList';
 import { PostgrestError } from '@supabase/supabase-js'
 import PersonLinkList from './PersonLinkList';
-import PersonFiles from '../pages/PersonFiles';
 import listFiles from '../utils/listFiles';
 import { useFiles } from '../hooks/useFiles';
+import DirectoryList from '../components/files/DirectoryList';
 
 export async function updatePersonState(to: string, id: number) {
   const { data, error } = await supabase
@@ -157,7 +157,7 @@ export default function PersonDetail({ session }: any) {
       case "confirmed":
         return <PersonConflictList conflicts={conflicts.filter((conflict) => conflict.type == "confirmed")} confirmed personId={+id!}/>
       case "files":
-        return <PersonFiles id={person.id} />
+        return <DirectoryList bucketName="people" path={`${id}`} />
       default:
         return <Navigate to="/not-found" />
     }
